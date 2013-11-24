@@ -25,7 +25,7 @@ void setup() {
   // is always my  FTDI adaptor, so I open Serial.list()[0].
   // On Windows machines, this generally opens COM1.
   // Open whatever port is the one you're using.
-  String portName = Serial.list()[6];
+  String portName = Serial.list()[0];
   myPort = new Serial(this, portName, 9600);
  
   
@@ -40,35 +40,46 @@ void setup() {
                 .setBackgroundColor(color(255,50))
                 .activateEvent(true)
                 ;
+                
     
     
   int spacing = 100;
   int size = 50;
+  int counter = 0;
                 
    for(int i=0;i<6;i++){
        for(int j=0;j<3;j++){
+         counter++;
+         
+    cp5.addGroup("group"+counter)
+              .setPosition(20+i*spacing,20+j*spacing)
+              .activateEvent(true)
+              ;    
+       
                 
-  cp5.addKnob("knob" + i+j)
+  cp5.addKnob("knob" + counter)
                
                .setRange(0,255)
                .setValue(50)
-               .setPosition(i*spacing,j*spacing)
+               .setPosition(0,0)
                .setRadius(50)
                .setSize(size,size)
                .setDragDirection(Knob.VERTICAL)
-               .setGroup(g1)
+               .setGroup("group"+counter)
                .setCaptionLabel("silent")
                .setBroadcast(true)
                ;  
-               
-    cp5.addButton("Active"+i+j)
-              .setGroup(g1)
-              .setLabelVisible(false)
+   /*            
+    cp5.addButton("Active"+counter)
+               .setGroup("group"+counter)
+               .setLabelVisible(false)
                .setSwitch(true)
                .setPosition(i*spacing,j*spacing+size)
                .setSize(50,19)
-               .plugTo(cp5, "knob"+i+j) 
+               .plugTo(cp5, "knob"+counter) 
                ;
+               
+               */
                   }
                 }
                      
@@ -79,7 +90,11 @@ void setup() {
 void draw() {
   background(0);
   
-  
+  for(int i=0;i<counter;i++){
+    cp5.getGroup("group"+counter).get
+    
+    
+  } 
 }
 
 
@@ -91,17 +106,10 @@ void controlEvent(ControlEvent theEvent) {
             +", isOpen? "+theEvent.getGroup().isOpen()
             );
             
+            
   } else if (theEvent.isController()){
-    if(theEvent.getController().isMousePressed()){
-       theEvent.getController().setBroadcast(!theEvent.getController().isBroadcast());     //! theEvent.getController().getBroadcast();
-       println("isMousePressed!");
-     if(theEvent.getController().isBroadcast()){
-       theEvent.getController().setCaptionLabel("Active!");
-     }else{
-       theEvent.getController().setCaptionLabel("silent");
+    println("controller!");
 
-     }
-    }
     /*
     println("got something from a controller "
             +theEvent.getController().getName()
