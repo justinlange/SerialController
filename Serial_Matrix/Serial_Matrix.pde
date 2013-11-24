@@ -54,6 +54,8 @@ void setup() {
     cp5.addGroup("group"+counter)
               .setPosition(20+i*spacing,20+j*spacing)
               .activateEvent(true)
+              .setId(counter)
+              .close()
               ;    
        
                 
@@ -67,7 +69,8 @@ void setup() {
                .setDragDirection(Knob.VERTICAL)
                .setGroup("group"+counter)
                .setCaptionLabel("silent")
-               .setBroadcast(true)
+               .setBroadcast(false)
+               .setId(counter)
                ;  
    /*            
     cp5.addButton("Active"+counter)
@@ -90,17 +93,31 @@ void setup() {
 void draw() {
   background(0);
   
+  /*
   for(int i=0;i<counter;i++){
     cp5.getGroup("group"+counter).get
     
     
-  } 
+  }
+ 
+ */ 
+}
+
+
+void serialString(int id) {
+
+  
+  
 }
 
 
 void controlEvent(ControlEvent theEvent) {
 
   if(theEvent.isGroup()) {
+    int groupId = theEvent.getGroup().getId();
+    boolean broadcastStatus = cp5.getController("knob"+groupId).isBroadcast();
+    cp5.getController("knob"+groupId).setBroadcast(!broadcastStatus);
+    
     println("got an event from group "
             +theEvent.getGroup().getName()
             +", isOpen? "+theEvent.getGroup().isOpen()
@@ -108,13 +125,17 @@ void controlEvent(ControlEvent theEvent) {
             
             
   } else if (theEvent.isController()){
-    println("controller!");
+   // println("controller!");
 
+    int knobId = theEvent.getController().getId();
+    
     /*
     println("got something from a controller "
             +theEvent.getController().getName()
             );
-            */
+            
+    */
+            
   }
   
 }
@@ -124,13 +145,17 @@ void keyPressed() {
   if(key==' ') {
     if(cp5.getGroup("g1")!=null) {
       
-                      
+      int counter = 0;                
    for(int i=0;i<6;i++){
        for(int j=0;j<3;j++){ 
-       if(cp5.getController("knob"+i+j).isBroadcast()){
-           println(cp5.getController("knob"+i+j).getValue());
-           int val = int(cp5.getController("knob"+i+j).getValue());
-           myPort.write("s"+val+",1,"+ i*j + (i*j)+1 +"\n"); 
+         counter++;
+       if(cp5.getController("knob"+counter).isBroadcast()){
+           //println(cp5.getController("knob"+counter).getValue());
+           int val = int(cp5.getController("knob"+counter).getValue());
+           String writeString = "s"+val+",1,"+ counter + "," + int(counter+1) + "\n";
+           println("counter: " + counter + "  " + writeString);
+           myPort.write(writeString); 
+           
          }
        }
      }
