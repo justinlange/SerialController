@@ -25,7 +25,7 @@ void setup() {
   // is always my  FTDI adaptor, so I open Serial.list()[0].
   // On Windows machines, this generally opens COM1.
   // Open whatever port is the one you're using.
-  String portName = Serial.list()[0];
+  String portName = Serial.list()[6];
   myPort = new Serial(this, portName, 9600);
  
   
@@ -145,6 +145,7 @@ void keyPressed() {
   if(key==' ') {
     if(cp5.getGroup("g1")!=null) {
       
+      int delay = 10;
       int counter = 0;                
    for(int i=0;i<6;i++){
        for(int j=0;j<3;j++){ 
@@ -152,7 +153,7 @@ void keyPressed() {
        if(cp5.getController("knob"+counter).isBroadcast()){
            //println(cp5.getController("knob"+counter).getValue());
            int val = int(cp5.getController("knob"+counter).getValue());
-           String writeString = "s"+val+",1,"+ counter + "," + int(counter+1) + "\n";
+           String writeString = "s"+delay+"," + val/10 + ","+ counter + "," + int(counter+1) + "\n";
            println("counter: " + counter + "  " + writeString);
            myPort.write(writeString); 
            
