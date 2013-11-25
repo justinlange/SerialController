@@ -15,15 +15,21 @@ void runPinPattern(int nDelay, int nReps, int nPatternStart, int nPatternEnd){
 
 void runPercus(int millisBetween[], int pinStrikes[], int writeHighLength[], int phraseLength) {
   
-  int lastMillis[18];
+  Serial.println("inside of runPercus!");
+
   
+  int lastMillis[18];
   int phraseLastMillis = millis();
   
+  /*
   for(int i=0;i<18;i++){
    lastMillis[i] = millis(); 
-  }
+   Serial.println("Running lastMillis!");
 
-  while(phraseLastMillis + phraseLength > millis() ){  
+  }
+  */
+
+  //while(phraseLastMillis + phraseLength < millis() ){  
 
     for (int i = 0; i < 18; i++) { 
       if(pinStrikes[i] > 0){
@@ -36,6 +42,6 @@ void runPercus(int millisBetween[], int pinStrikes[], int writeHighLength[], int
           }
         }  
       }
-    }
+   // }
   }
 

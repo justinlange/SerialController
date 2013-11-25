@@ -28,7 +28,16 @@ void setup() {
   // is always my  FTDI adaptor, so I open Serial.list()[0].
   // On Windows machines, this generally opens COM1.
   // Open whatever port is the one you're using.
-  String portName = Serial.list()[0];
+  
+  int portVal;
+  if(Serial.list().length > 6){
+    portVal = 6;
+  }else{
+    portVal = 0;
+  }
+  println("selected port: " + portVal + " -- " + Serial.list()[portVal]);
+    
+    String portName = Serial.list()[portVal];
   myPort = new Serial(this, portName, 9600);
 
 
@@ -74,22 +83,22 @@ void setup() {
             .setPosition(20+i*spacing, 20+j*int(spacing*1.3))
             .activateEvent(true)
             .setId(counter)
-            .close()
+            //.close()
             .setWidth(size)
             .setBarHeight(size/10)
             ;    
 
 
       cp5.addKnob("knob" + counter)
-          .setRange(0, 255)
-          .setValue(50)
+          .setRange(0, 99)
+          .setValue(99)
           .setPosition(0, 0)
           .setRadius(50)
           .setSize(size, size)
           .setDragDirection(Knob.HORIZONTAL)
           .setGroup("group"+counter)
           .setCaptionLabel("silent")
-          .setBroadcast(false)
+          .setBroadcast(true)
           .setId(counter)
           ;  
 
@@ -152,9 +161,9 @@ void controlEvent(ControlEvent theEvent) {
 
 void keyPressed() {
    if (key==' ') writeComplexString();
-}
+        
  
- /* 
+ 
   if (key=='o') {
     if (cp5.getGroup("g1")!=null) {
 
@@ -176,7 +185,7 @@ void keyPressed() {
 }
 
 
-*/
+
 
 
 
