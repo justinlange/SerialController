@@ -15,6 +15,10 @@ void runPinPattern(int nDelay, int nReps, int nPatternStart, int nPatternEnd){
 
 void runPercus(int millisBetween[], int pinStrikes[], int writeHighLength[], int phraseLength) {
   
+  if(firstCall){
+   firstCall = false; 
+  }
+  
   Serial.println("inside of runPercus!");
 
   

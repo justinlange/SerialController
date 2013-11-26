@@ -1,5 +1,3 @@
-
-
 int mDelay = 200;   
 int mDelayS = 20;
 int pHigh = 255;
@@ -11,6 +9,8 @@ int brightPin = 0;
 int strikingPin = 0;
 
 boolean percusBool = false;
+boolean debugBool = true;
+boolean firstCall = false;
 
 boolean dChordState, minChordState, allPwmState, aChordState, minChordBool, gChordState, percusState, hamState;
 int minChordCount = 0;
@@ -24,11 +24,9 @@ const int ledPins[] = {
 const int stringPins[] = {
   2,3,4,5,6,7,8,9,10,11,12,13,28,29,32,33,36,37 };
 
-
-
 int s1f1 = 33;
 int s2f1 = 9;
-int s3f1 = 2; //sometimes triggers reset
+int s3f1 = 2; 
 int s4f1 = 11;
 int s5f1 = 32; 
 int s6f1 = 7;
@@ -68,28 +66,23 @@ String chordShapes[] = {
 boolean switchState = false;
 boolean serialOn;
 
-short millisBetween[18],lastMillis[18],pinStrikes[18],writeHighLength[18],repsCompleted[18];
+short millisBetween[18],pinStrikes[18],writeHighLength[18],repsCompleted[18];
+unsigned long lastMillis[18];
+boolean highState[18];
 short phraseLength = 1000;
 
 void setup() {
   serialOn = true;
 
   if(serialOn == true){
-    Serial.begin(9600);
+    Serial.begin(115200);
   }
 
+  for (int thisPin = 0; thisPin < LedPinCount; thisPin++)  pinMode(ledPins[thisPin], OUTPUT);      
+  for (int thisPin = 0; thisPin < switchPinCount; thisPin++)   pinMode(switchPins[thisPin], INPUT);      
+  for (int thisPin=0; thisPin < 18; thisPin++) pinMode(stringPos[thisPin], OUTPUT);
 
-  for (int thisPin = 0; thisPin < LedPinCount; thisPin++)  {
-    pinMode(ledPins[thisPin], OUTPUT);      
-  }
-  for (int thisPin = 0; thisPin < switchPinCount; thisPin++)  {
-    pinMode(switchPins[thisPin], INPUT);      
-  }
 
-  for (int thisPin=0; thisPin < 18; thisPin++){
-    pinMode(stringPos[thisPin], OUTPUT);
-  }
-  
   initPercusArrays();
 }
 
@@ -106,50 +99,88 @@ void loop() {
   //readSerial();
   // readSerialNums();
   //delay(2);
-  
+
   runPercusSimple(pinStrikes, phraseLength);
 
 }
 
 void serialEvent(){
-  readSerialPhrase(); 
+  
+  char evalChar = (char)Serial.read();
+  
+  if (evalChar == 'd'){
+    readSerialData();
+  }else if (evalChar == 'p'){
+    readSerialPhrase(); 
+  }else if (evalChar == 'l'){
+    writeLow(); 
+  }
+
 }
 
+void writeLow(){
+  debugString("found an l");
+  
+  for(int i=0;i<18;i++) { 
+    digitalWrite(stringPos[i], LOW);   
+  }
+}
+
+
 void initPercusArrays(){
-   for (int i=0;i<18;i++){
-      lastMillis[i] = millis(); 
-      millisBetween[i] = 100;
-      pinStrikes[i] = 0;
-      writeHighLength[i] = 50; 
+  for (int i=0;i<18;i++){
+    lastMillis[i] = millis(); 
+    millisBetween[i] = 250;
+    pinStrikes[i] = 0;
+    writeHighLength[i] = 10; 
+    highState[i] = false;
   } 
 }
 
+void readSerialData(){
+
+  debugString("found a d!");   
+
+  int byteCounter = 0;
+  
+  for(int i=0;i<18;i++)   {
+    if(Serial.peek()  > -1 ){
+      byteCounter++;
+      millisBetween[i] = Serial.parseInt();
+      debugTwo("millisBetween at", stringPos[i], "is", millisBetween[i]);
+    }
+  }
+}
+
+
 void readSerialPhrase(){
 
-  if (Serial.find("p")) {
-    Serial.println("found a p!");   
-    
-    int byteCounter = 0;
-    
-    for(int i=0;i<25;i++)   {
-      if(Serial.peek()  > -1 ){
-        byteCounter++;
-        pinStrikes[i] = Serial.parseInt();
-        repsCompleted[i] = pinStrikes[i]; 
-        
-        Serial.print("Adding data to pinStrikes array at position ");
-        Serial.print(i);
-        Serial.print("  at byteCounter: ");
-        Serial.print(byteCounter);
-        Serial.print(" with value: ");
-        Serial.println(pinStrikes[i]);
-      }else{
-        Serial.print("no data at position ");
-        Serial.println(i);
-      } 
+  debugString("found a p!");    
+  debugOne("millis at top of readSerialPhrase", millis());
+
+  firstCall = true;
+
+  int byteCounter = 0;
+
+  for(int i=0;i<18;i++)   {
+    if(Serial.peek()  > -1 ){
+      byteCounter++;
+      pinStrikes[i] = Serial.parseInt();
+      repsCompleted[i] = pinStrikes[i]; 
+
+      debugThree( "Adding data to pinStrikes array at position"
+        ,i
+        ,"at byteCounter"
+        ,byteCounter
+        ,"with value"
+        ,pinStrikes[i]
+        );
     }
-  }   
-}
+    else{
+      debugOne("no data at position",i);
+    } 
+  }
+}   
 
 
 void runPercusSimple(short _pinStrikes[], int _phraseLength) {
@@ -157,161 +188,59 @@ void runPercusSimple(short _pinStrikes[], int _phraseLength) {
 
   //Serial.println("inside of runPercusSimple!");
 
+  if(firstCall){
+    firstCall = false; 
+    for(int i = 0; i < 18; i++){
+      lastMillis[i] = millis();
+    }
+  }
 
   for (int i = 0; i < 18; i++) { 
-    
+
     if(pinStrikes[i] > 0 && repsCompleted[i] > 0){
-      debugTwo("lastMillis", lastMillis[i], "millis between", millisBetween[i]);
       if(millis() < lastMillis[i] + millisBetween[i] && millis() < lastMillis[i] + millisBetween[i] + writeHighLength[i]) {
-        digitalWrite(stringPos[i], HIGH);  
-        debugTwo("writing HIGH to pin", stringPos[i], "at rep", repsCompleted[i]);
-      }else{
+        if(!highState[i]){
+          digitalWrite(stringPos[i], HIGH);  
+          debugTwo("writing HIGH to pin", stringPos[i], "at rep", repsCompleted[i]);
+          highState[i] = true;
+          debugThree(
+          "millis", millis(),
+          "lastMillis + millisBtween", lastMillis[i] + millisBetween[i],  
+          "lastMillis + millisBetween + writeHighLength", lastMillis[i] + millisBetween[i] + writeHighLength[i] 
+            );
+        }
+      }
+      else{
         lastMillis[i] = millis();    
         digitalWrite(stringPos[i], LOW);
         repsCompleted[i]--;   
         debugTwo("writing LOW to pin", stringPos[i], "at rep", repsCompleted[i]);
-        
+        highState[i] = false;
+        debugThree(
+        "millis", millis(),
+        "lastMillis + millisBtween", lastMillis[i] + millisBetween[i],  
+        "lastMillis + millisBetween + writeHighLength", lastMillis[i] + millisBetween[i] + writeHighLength[i] 
+          );
+
       }
     }  
   }
 }
 
-
-void readSerialNums(){
-
-  // Assumes a string in from the serial port like so:
-  // s ledNumber, brightness \n
-  // for example: "s5,200\n":
-
-  int nDelay = 0;
-  int nReps = 0;
-  int nPatternStart = 0;
-  int nPatternEnd = 0;
-
-  if (Serial.find("s")) {
-    nDelay = Serial.parseInt(); // parses numeric characters before the comma
-    nReps = Serial.parseInt();// parses numeric characters after the comma
-    nPatternStart = Serial.parseInt();// parses numeric characters after the comma
-    nPatternEnd = Serial.parseInt();// parses numeric characters after the comma
-
-
-    // print the results back to the sender:
-    Serial.print("nDelay: " );
-    Serial.print(nDelay);
-    Serial.print(" reps ");
-    Serial.print(nReps);
-    Serial.print(" nPatternStart ");
-    Serial.print(nPatternStart);
-    Serial.print(" nPatternEnd ");
-    Serial.print(nPatternEnd);
-    Serial.println("  nReps");
-
-
-    // run some pins:
-    Serial.println("inside of readSerialNums");
-    runPinPattern(nDelay,nReps,nPatternStart,nPatternEnd);
-  }
-}
-
-
-
-void runPins(){
-
-  for (int thisPin = 0; thisPin < 18; thisPin++) { 
-    digitalWrite(stringPos[thisPin], HIGH);
-    delay(mDelay);
-    digitalWrite(stringPos[thisPin], LOW);
-  }
-  delay(mDelay);
-
-  for (int thisPin = 0; thisPin < 18; thisPin++) { 
-    digitalWrite(stringPos[thisPin], LOW);
-  }
-
-
-
-}
-
-
-void runLeds(){
-  for (int thisPin = 0; thisPin < 12; thisPin++) { 
-    digitalWrite(ledPins[thisPin], HIGH);
-    delay(mDelayS);
-    digitalWrite(ledPins[thisPin], LOW);
-    delay(mDelay);
-  }
-}
-
-boolean evalSwitches(){
-  for(int thisPin = 0; thisPin < switchPinCount; thisPin ++ ){
-    boolean mSwitchState = digitalRead(switchPins[thisPin]); 
-    if(mSwitchState == true){ 
-      return true;
-    }
-  }
-  return false;
-}
-
-void debugMode( ){
-  int offset = 0;
-
-  for(int thisPin = 0; thisPin < switchPinCount; thisPin ++ ){
-    switchState = digitalRead(switchPins[thisPin]); 
-    if(switchState == true){
-
-      if(serialOn == true){
-        Serial.print("serial state: ");
-        Serial.print(serialOn);
-        Serial.print("thisPin: ");
-        Serial.print(thisPin);
-        Serial.print("  switch: ");
-        Serial.print(switchPins[thisPin]);
-        Serial.print("  led pin: ");
-        Serial.print(ledPins[thisPin]);
-        Serial.print("   stringPos:  ");
-        Serial.println(stringPos[thisPin+offset]);
-      }
-      digitalWrite(ledPins[thisPin], HIGH);
-      digitalWrite(stringPos[thisPin+offset], HIGH);
-      brightPin = thisPin;
-      strikingPin = thisPin+offset;
-    }
-  }
-
-  switchState = evalSwitches();
-
-  for (int thisPin = 0; thisPin < LedPinCount; thisPin++) { 
-    if(switchState == false){
-      digitalWrite(ledPins[thisPin], LOW);       
-    }
-  }   
-
-  for (int thisPin=0; thisPin < 18; thisPin++){
-    if(switchState == false){
-      digitalWrite(stringPos[thisPin], LOW);
-    }
-  }   
-
-  if(serialOn == true){
-    delay(mDelay);
-  } 
-}
-
+/*
 void readSerial(){
-
-
-  if (Serial.available()) {
-    //int inByte = Serial.read();
-    char val = Serial.read();
-    if (val == 'H') { // If H was received
-      runPins();  
-    }
-    //Serial.write(inByte); 
-  }
-  delay(2);
-
-}
-
-
+ if (Serial.available()) {
+ //int inByte = Serial.read();
+ char val = Serial.read();
+ if (val == 'H') { // If H was received
+ runPins();  
+ }
+ //Serial.write(inByte); 
+ }
+ delay(2);
+ }
+ 
+ 
+ */
 
 
