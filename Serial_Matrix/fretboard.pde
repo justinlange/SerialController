@@ -1,3 +1,4 @@
+/*
 void createFretboard() {
   int counter = 0;
   for(int i=0;i<6;i++){
@@ -6,7 +7,8 @@ void createFretboard() {
       dots[counter] = new Dot(i*hSpacing,vSpacing/3+j*vSpacing+(i%2)*hSpacing,hSpacing);
 }
 
-
+*/
+/*
 void drawFrets() {
  stroke(200);
  strokeWeight(2); 
@@ -38,6 +40,6 @@ for(int i=0;i<6;i++){
 }
 
 
-
+*/
 
 
