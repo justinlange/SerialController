@@ -1,7 +1,3 @@
-
-
-
-
 import processing.serial.*;
 import controlP5.*; 
 
@@ -14,6 +10,7 @@ int delay = 10;
 void setup() { 
   println(Serial.list());
 
+  createFretboard();  
   // I know that the first port in the serial list on my mac
   // is always my  FTDI adaptor, so I open Serial.list()[0].
   // On Windows machines, this generally opens COM1.
@@ -27,7 +24,7 @@ void setup() {
   }
   println("selected port: " + portVal + " -- " + Serial.list()[portVal]);
     
-    String portName = Serial.list()[portVal];
+  String portName = Serial.list()[portVal];
   myPort = new Serial(this, portName, 115200);
 
 
@@ -35,9 +32,6 @@ void setup() {
   frameRate(8);
 
   cp5 = new ControlP5(this);
-
-
-
 
   int spacing = 150;
   int size = spacing;
@@ -117,6 +111,7 @@ void setup() {
 
 void draw() {
   background(0);
+  drawFrets();
 }
 
 
