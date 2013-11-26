@@ -1,21 +1,11 @@
-/**
- * ControlP5 Group
- *
- *
- * find a list of public methods available for the Group Controller
- * at the bottom of this sketch.
- *
- * by Andreas Schlegel, 2012
- * www.sojamo.de/libraries/controlp5
- *
- */
+
+
+
+
 import processing.serial.*;
-
-Serial myPort; 
-
-
 import controlP5.*; 
 
+Serial myPort; 
 ControlP5 cp5;
 
 int delay = 10;
@@ -31,14 +21,14 @@ void setup() {
   
   int portVal;
   if(Serial.list().length > 6){
-    portVal = 6;
+    portVal = 7;
   }else{
     portVal = 0;
   }
   println("selected port: " + portVal + " -- " + Serial.list()[portVal]);
     
     String portName = Serial.list()[portVal];
-  myPort = new Serial(this, portName, 9600);
+  myPort = new Serial(this, portName, 115200);
 
 
   size(1400, 900);
@@ -74,30 +64,47 @@ void setup() {
       .setBroadcast(true)
       .setId(19)
                           ; 
+  color red = color(255,0,0);
 
   for (int j=0;j<3;j++) {           
     for (int i=0;i<6;i++) {
       counter++;
 
       cp5.addGroup("group"+counter)
-            .setPosition(20+i*spacing, 20+j*int(spacing*1.3))
+            .setPosition(20+i*spacing/2, 20+j*int(spacing*1.3))
             .activateEvent(true)
             .setId(counter)
             //.close()
-            .setWidth(size)
+            .setWidth(size/2)
             .setBarHeight(size/10)
             ;    
 
 
       cp5.addKnob("knob" + counter)
           .setRange(0, 99)
-          .setValue(99)
-          .setPosition(0, 0)
-          .setRadius(50)
-          .setSize(size, size)
+          .setValue(3)
+          .setPosition(0, size/2)
+          .setRadius(spacing/2)
+          .setSize(size/2, size/2)
           .setDragDirection(Knob.HORIZONTAL)
           .setGroup("group"+counter)
-          .setCaptionLabel("silent")
+          .setCaptionLabel("reps")
+          .setBroadcast(true)
+          .setId(counter)
+          ;  
+      
+      cp5.addKnob("Tknob" + counter)
+          .setColorBackground(color(100, 20, 25))  
+          .setColorForeground(color(140, 40, 65))      
+          .setColorActive(color(255, 40, 65))        
+          .setRange(5, 500)
+          .setValue(50)
+          .setPosition(0, 0)
+          .setRadius(size/2)
+          .setSize(size/2, size/2)
+          .setDragDirection(Knob.HORIZONTAL)
+          .setGroup("group"+counter)
+          .setCaptionLabel("timing")
           .setBroadcast(true)
           .setId(counter)
           ;  
@@ -107,22 +114,13 @@ void setup() {
 }
 
 
+
 void draw() {
   background(0);
-
-  /*
-  for(int i=0;i<counter;i++){
-   cp5.getGroup("group"+counter).get
-   
-   
-   }
-   
-   */
 }
 
 
-void serialString(int id) {
-}
+
 
 
 void controlEvent(ControlEvent theEvent) {
@@ -158,11 +156,14 @@ void controlEvent(ControlEvent theEvent) {
   }
 }
 
+void serialString(int id) {
+}
+
 
 void keyPressed() {
-   if (key==' ') writeComplexString();
-        
- 
+  
+   if (key==' ') writeComplexString();      
+   if (key=='d') writeDelayString();
  
   if (key=='o') {
     if (cp5.getGroup("g1")!=null) {
@@ -183,6 +184,9 @@ void keyPressed() {
     }
   }
 }
+
+
+
 
 
 
@@ -288,7 +292,5 @@ a list of all methods available for the Group Controller
  java.lang.Object : String toString() 
  java.lang.Object : boolean equals(Object) 
  
- 
  */
-
 
