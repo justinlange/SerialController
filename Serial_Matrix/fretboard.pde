@@ -1,13 +1,23 @@
+//Dot[] dots;
+
+ int hSpacing = 30;
+ int numFrets = 5;
+ int vSpacing = hSpacing*4;
+ int offset = hSpacing;
 /*
 void createFretboard() {
   int counter = 0;
   for(int i=0;i<6;i++){
     for(int j=0;j<3;j++){
+      Dot dots[counter] = new Dot(i*hSpacing,vSpacing/3+j*vSpacing+(i%2)*hSpacing,hSpacing);
       counter++;
-      dots[counter] = new Dot(i*hSpacing,vSpacing/3+j*vSpacing+(i%2)*hSpacing,hSpacing);
-}
 
+    }
+  }
+}
 */
+
+
 /*
 void drawFrets() {
  stroke(200);

@@ -7,7 +7,7 @@ class Dot {
     
    Dot(int _xPos, int _yPos, int _size) {
      xPos = _xPos;
-     yPos = yPos;
+     yPos = _yPos;
      size = _size;
    }
     
@@ -15,5 +15,4 @@ class Dot {
      fill(50,200);
      ellipse(xPos,yPos,size,size);
    }
-  
 }

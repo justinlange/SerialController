@@ -6,11 +6,14 @@ ControlP5 cp5;
 
 int delay = 10;
 
+Dot[] dots;
+Dot myDot = new Dot(500,500,100);
 
 void setup() { 
   println(Serial.list());
+  
 
- // createFretboard();  
+ //createFretboard();  
   // I know that the first port in the serial list on my mac
   // is always my  FTDI adaptor, so I open Serial.list()[0].
   // On Windows machines, this generally opens COM1.
@@ -111,7 +114,15 @@ void setup() {
 
 void draw() {
   background(0);
- // drawFrets();
+  
+  myDot.drawCircle();
+  /*
+  for (int i=0;i<17;i++){
+   dots[i].drawCircle(); 
+  }
+  */
+  
+  //drawFrets();
 }
 
 
@@ -147,7 +158,7 @@ void controlEvent(ControlEvent theEvent) {
     println("got something from a controller "
      +theEvent.getController().getName()
      );
-     */
+     */ 
   }
 }
 
