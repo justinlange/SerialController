@@ -1,50 +1,73 @@
 import processing.serial.*;
 import controlP5.*; 
 
+import com.onformative.leap.LeapMotionP5;
+import com.leapmotion.leap.Finger;
+LeapMotionP5 leap;
+
+
 Serial myPort; 
 ControlP5 cp5;
+
+FingerCatcher fingerCatch;
 
 int delay = 10;
 
 Dot[] dots;
 Dot myDot = new Dot(500,500,100);
 
-void setup() { 
+public void setup() { 
+  size(500, 500);
+  //frameRate(8);
+
+  
+  leap = new LeapMotionP5(this);
+  fingerCatch = new FingerCatcher(leap);
+   
   println(Serial.list());
-  
-
- //createFretboard();  
-
-  
   int portVal;
   if(Serial.list().length > 6){
     portVal = 7;
   }else{
     portVal = 0;
   }
-  println("selected port: " + portVal + " -- " + Serial.list()[portVal]);
-    
+  println("selected port: " + portVal + " -- " + Serial.list()[portVal]);  
   String portName = Serial.list()[portVal];
   myPort = new Serial(this, portName, 115200);
-
-
-  size(1400, 900);
-  frameRate(8);
-
+  
 
   //create p5 knobs
-  
-  createKnobs();
+ // createKnobs();
+ 
+  //createFretboard();  
+
   
   
 }
 
 
 
-void draw() {
+public void draw() {
   background(0);
   
-  myDot.drawCircle();
+  fingerCatch.getFingers(false, true);
+  fingerCatch.drawFingerPoints();
+    fingerCatch.drawGrid();
+
+  fingerCatch.clearVector();
+  
+  /*
+  for (Finger finger : leap.getFingerList()) {
+    PVector fingerPos = leap.getTip(finger);
+   //     checkRectSimple(fingerPos);
+
+    fill(255);
+    ellipse(fingerPos.x, fingerPos.y, 10, 10);
+    println("x: " + fingerPos.x + "  y:" + fingerPos.y + "  z: " + fingerPos.z);
+  }
+  */
+
+  //myDot.drawCircle();
   /*
   for (int i=0;i<17;i++){
    dots[i].drawCircle(); 
