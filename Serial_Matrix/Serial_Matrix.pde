@@ -12,69 +12,72 @@ ControlP5 cp5;
 FingerCatcher fingerCatch;
 
 int delay = 10;
+boolean leapMode = false;
 
 Dot[] dots;
-Dot myDot = new Dot(500,500,100);
+Dot myDot = new Dot(500, 500, 100);
 
 public void setup() { 
-  size(500, 500);
+  size(800, 800);
   //frameRate(8);
 
-  
+
   leap = new LeapMotionP5(this);
-  fingerCatch = new FingerCatcher(leap);
-   
+
+  if (leapMode) fingerCatch = new FingerCatcher(leap);
+
+
   println(Serial.list());
   int portVal;
-  if(Serial.list().length > 6){
+  if (Serial.list().length > 6) {
     portVal = 7;
-  }else{
+  }
+  else {
     portVal = 0;
   }
   println("selected port: " + portVal + " -- " + Serial.list()[portVal]);  
   String portName = Serial.list()[portVal];
   myPort = new Serial(this, portName, 115200);
-  
+
 
   //create p5 knobs
- createKnobs();
- 
-  //createFretboard();  
+  createKnobs();
 
-  
-  
+  //createFretboard();
 }
 
 
 
 public void draw() {
   background(0);
-  
-  fingerCatch.getFingers();
-  fingerCatch.drawFingerPoints();
-//  fingerCatch.drawGrid();
-  fingerCatch.drawTriGrid();
-  //fingerCatch.buildSerialString();
-  fingerCatch.clearVector();
-  
+
+  if (leapMode) {
+    fingerCatch.getFingers();
+    fingerCatch.drawFingerPoints();
+    //  fingerCatch.drawGrid();
+    fingerCatch.drawTriGrid();
+    //fingerCatch.buildSerialString();
+    fingerCatch.clearVector();
+  }
+
   /*
   for (Finger finger : leap.getFingerList()) {
-    PVector fingerPos = leap.getTip(finger);
+   PVector fingerPos = leap.getTip(finger);
    //     checkRectSimple(fingerPos);
-
-    fill(255);
-    ellipse(fingerPos.x, fingerPos.y, 10, 10);
-    println("x: " + fingerPos.x + "  y:" + fingerPos.y + "  z: " + fingerPos.z);
-  }
-  */
+   
+   fill(255);
+   ellipse(fingerPos.x, fingerPos.y, 10, 10);
+   println("x: " + fingerPos.x + "  y:" + fingerPos.y + "  z: " + fingerPos.z);
+   }
+   */
 
   //myDot.drawCircle();
   /*
   for (int i=0;i<17;i++){
    dots[i].drawCircle(); 
-  }
-  */
-  
+   }
+   */
+
   //drawFrets();
 }
 
@@ -107,7 +110,7 @@ void controlEvent(ControlEvent theEvent) {
     println("got something from a controller "
      +theEvent.getController().getName()
      );
-     */ 
+     */
   }
 }
 
@@ -116,10 +119,10 @@ void serialString(int id) {
 
 
 void keyPressed() {
-  
-   if (key==' ') writeComplexString('p');      
-   if (key=='d') writeComplexString('d');
- 
+
+  if (key==' ') writeComplexString('p');      
+  if (key=='d') writeComplexString('d');
+
   if (key=='o') {
     if (cp5.getGroup("g1")!=null) {
 
@@ -248,4 +251,3 @@ a list of all methods available for the Group Controller
  java.lang.Object : boolean equals(Object) 
  
  */
-
