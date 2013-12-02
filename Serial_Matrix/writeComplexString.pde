@@ -1,4 +1,4 @@
-void writeComplexString() {
+void writeComplexString(char letter) {
        if (cp5.getGroup("g1")!=null) {
 
     int[] millisBetween = new int[18]; 
@@ -21,15 +21,26 @@ void writeComplexString() {
         counter++;
           if (cp5.getController("knob"+counter).isBroadcast()) {
             int val = int(cp5.getController("knob"+counter).getValue());            
-            pinStrikes[i] = val;
-            
+            pinStrikes[i] = val;    
+          }
+           if (cp5.getController("Tknob"+counter).isBroadcast()) {
+            int val = int(cp5.getController("Tknob"+counter).getValue());
+            millisBetween[i] = val;            
           }
         }
      
-      writeString = writeString +"p";
+      writeString = writeString + letter;
       
+      if(letter == 'p'){
+        for(int i=0;i<runLimit;i++) writeString = writeString + pinStrikes[i] + ",";
+        writeString = writeString + pinStrikes[17] + "\n";
+      }else if(letter == 'd'){
+           for(int i=0;i<18;i++) writeString = writeString + millisBetween[i] + ",";
+           writeString = writeString + millisBetween[17] + "\n";
+      }
+
+        
       //for(int i=0;i<18;i++) writeString = writeString + millisBetween[i] + ",";
-      for(int i=0;i<runLimit;i++) writeString = writeString + pinStrikes[i] + ",";
       //for(int i=0;i<17;i++) writeString = writeString + writeHighLength[i] + ",";
       //writeString = writeString + writeHighLength[runLimit+1] + "\n";
       
