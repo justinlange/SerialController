@@ -52,7 +52,8 @@ public void draw() {
   
   fingerCatch.getFingers(false, true);
   fingerCatch.drawFingerPoints();
-    fingerCatch.drawGrid();
+//  fingerCatch.drawGrid();
+  fingerCatch.drawTriGrid();
 
   fingerCatch.clearVector();
   
