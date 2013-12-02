@@ -37,7 +37,7 @@ public void setup() {
   
 
   //create p5 knobs
- // createKnobs();
+ createKnobs();
  
   //createFretboard();  
 
@@ -50,11 +50,11 @@ public void setup() {
 public void draw() {
   background(0);
   
-  fingerCatch.getFingers(false, true);
+  fingerCatch.getFingers();
   fingerCatch.drawFingerPoints();
 //  fingerCatch.drawGrid();
   fingerCatch.drawTriGrid();
-
+  //fingerCatch.buildSerialString();
   fingerCatch.clearVector();
   
   /*
