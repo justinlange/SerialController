@@ -3,6 +3,7 @@
  * example shows how to send and receive osc messages.
  * oscP5 website at http://www.sojamo.de/oscP5
  */
+boolean printStuff = false;
 
 import oscP5.*;
 import netP5.*;
@@ -23,7 +24,7 @@ void setup() {
    * and the port of the remote location address are the same, hence you will
    * send messages back to this sketch.
    */
-  myRemoteLocation = new NetAddress("127.0.0.1", 12000);
+  myRemoteLocation = new NetAddress("127.0.0.1", 9000);
   oscP5.plug(this, "pwm", "/pwm");
   //oscP5.plug(this, "
 }
@@ -54,25 +55,47 @@ void mousePressed() {
 void oscEvent(OscMessage theOscMessage) {
   if (theOscMessage.isPlugged()==false) {
     /* print the address pattern and the typetag of the received OscMessage */
+  
 
     if (theOscMessage.checkTypetag("fff")) {
-      int knobNumber = getNum(theOscMessage.addrPattern());
-      print("rep value: " + theOscMessage.get(0).floatValue());
-      println(" knobNumber: " + knobNumber);
+      String sGroup = "/rep";
+      parseBCR(theOscMessage, sGroup);   
     }else if (theOscMessage.checkTypetag("ffi")) {
-      int knobNumber = getNum(theOscMessage.addrPattern());
-      print("pwm value: " + theOscMessage.get(0).floatValue());
-      println(" knobNumber: " + knobNumber);
+      String sGroup = "/pwm";
+      parseBCR(theOscMessage, sGroup);
     }else if (theOscMessage.checkTypetag("fif")) {
-      int knobNumber = getNum(theOscMessage.addrPattern());
-      print("writeHigh value: " + theOscMessage.get(0).floatValue());
-      println(" knobNumber: " + knobNumber);  
+      String sGroup = "/write";
+      parseBCR(theOscMessage, sGroup);
+    }else if (theOscMessage.checkTypetag("fii")) {
+      String sGroup = "/seq";
+      parseBCR(theOscMessage, sGroup);
     }else{
       print("osc message not mapped: " + theOscMessage);
       print(" addrpattern: "+theOscMessage.addrPattern());
       println(" typetag: "+theOscMessage.typetag());
-    }
+    }  
   }
+}
+
+void parseBCR(OscMessage theOscMessage, String sGroup) {      
+      int knobNumber = getNum(theOscMessage.addrPattern());
+      int tVar = int(theOscMessage.get(0).floatValue()*100);
+      OscMessage myMessage = new OscMessage(sGroup);
+      myMessage.add(knobNumber);
+      myMessage.add(tVar);
+      oscP5.send(myMessage, myRemoteLocation);
+      debugTwo("rep value", theOscMessage.get(0).floatValue(), "knobNumber", knobNumber);
+}
+
+void sendMessage() {
+   OscMessage myMessage = new OscMessage("/test");
+
+  myMessage.add(123); /* add an int to the osc message */
+
+  /* send the message */
+  oscP5.send(myMessage, myRemoteLocation); 
+  
+  
 }
 
 int getNum(String addrPattern){
