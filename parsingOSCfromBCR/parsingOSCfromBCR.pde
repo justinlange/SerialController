@@ -85,6 +85,7 @@ void parseBCR(OscMessage theOscMessage, String sGroup) {
       myMessage.add(tVar);
       oscP5.send(myMessage, myRemoteLocation);
       debugTwo("rep value", theOscMessage.get(0).floatValue(), "knobNumber", knobNumber);
+      //println(myMessage);
 }
 
 void sendMessage() {

@@ -261,19 +261,24 @@ void slipDecode(byte incoming) {
     //if this one is the esc eot
     if (incoming==slipescend) { 
       serialBuffer.add(eot);
+      //println(serialBuffer);
+
     } 
     else if (incoming==slipescesc) {
       serialBuffer.add(slipesc);
+      //println(serialBuffer);
     }
   } 
   else if (incoming==eot) {
     //if it's the eot
     //send off the packet
     SerialSendToUDP();
+    
   } 
   else {
     serialBuffer.add(incoming);
   }
+  
 }
 
 void slipEncode(byte incoming) {
@@ -297,7 +302,7 @@ void slipEncode(byte incoming) {
 UDP udp;
 
 int inPort = 9000;
-int outPort = 9001;
+int outPort = 9005;
 String ipAddress = "127.0.0.1";
 
 void setupUDP() {
@@ -311,6 +316,11 @@ void stopUDP() {
 }
 
 void UDPSendBuffer(byte[] data) {
+  String blankString = "";
+  for(int i=0;i<data.length;i++){
+    blankString+=(data[i]);  
+  }
+  //println(blankString);
   udp.send( data, ipAddress, outPort );
 }
 
@@ -319,7 +329,7 @@ void receive( byte[] data) {
   drawIncomingUDP();
   //send it over to serial
   serialSend(data);
-  println("data: " + data);
+  //println("data: " + data);
 }
 
 /************************************************************************************

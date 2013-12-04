@@ -1,3 +1,5 @@
+/*
+
 // MESSAGE PROTOCOL OBJECT
 #include <OscSerial.h>
 
@@ -7,6 +9,8 @@
 
 OscSerial oscSerial;
 long timer;
+
+*/
 
 int mDelay = 200;   
 int mDelayS = 20;
@@ -51,8 +55,8 @@ short phraseLength = 1000;
 void setup() {
   
   initPins();
-  Serial.begin(115200);
-  oscSerial.begin(Serial); 
+  Serial.begin(9600);
+ // oscSerial.begin(Serial); 
 
 
   for (int thisPin = 0; thisPin < LedPinCount; thisPin++)  pinMode(ledPins[thisPin], OUTPUT);      
@@ -65,7 +69,7 @@ void setup() {
 
 
 void loop() {
-
+/*
     long now = millis();
   if (now-timer > 100) {
     
@@ -77,6 +81,7 @@ void loop() {
   
   // important! 
   oscSerial.listen();
+  */
   
   //runLeds();
   //runPins();
@@ -93,10 +98,70 @@ void loop() {
 
 }
 
+void serialEvent(){
+  
+  char evalChar = (char)Serial.read();
+  
+  if (evalChar == 'd'){
+    readSerialData();
+  }else if (evalChar == 'p'){
+    readSerialPhrase(); 
+  }else if (evalChar == 'l'){
+    writeLow(); 
+  }
+
+}
+
+void readSerialData(){
+
+  debugString("found a d!");   
+
+  int byteCounter = 0;
+  
+  for(int i=0;i<18;i++)   {
+    if(Serial.peek()  > -1 ){
+      byteCounter++;
+      millisBetween[i] = Serial.parseInt();
+      debugTwo("millisBetween at", stringPos[i], "is", millisBetween[i]);
+    }
+  }
+}
+
+
+void readSerialPhrase(){
+
+  debugString("found a p!");    
+  debugOne("millis at top of readSerialPhrase", millis());
+
+  firstCall = true;
+
+  int byteCounter = 0;
+
+  for(int i=0;i<18;i++)   {
+    if(Serial.peek()  > -1 ){
+      byteCounter++;
+      pinStrikes[i] = Serial.parseInt();
+      repsCompleted[i] = pinStrikes[i]; 
+
+      debugThree( "Adding data to pinStrikes array at position"
+        ,i
+        ,"at byteCounter"
+        ,byteCounter
+        ,"with value"
+        ,pinStrikes[i]
+        );
+    }
+    else{
+      debugOne("no data at position",i);
+    } 
+  }
+}   
+/*
 void oscEvent(OscMessage &m) { // *note the & before msg
   // receive a message 
   m.plug("/led", myFunction); 
 }
+
 
 void myFunction(OscMessage &m) {  // *note the & before msg
   // getting to the message data 
@@ -105,7 +170,7 @@ void myFunction(OscMessage &m) {  // *note the & before msg
   if (value == 1) digitalWrite(13, HIGH);
 }
 
-
+*/
 
 
 void writeLow(){

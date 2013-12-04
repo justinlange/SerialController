@@ -30,14 +30,14 @@ public void setup() {
   println(Serial.list());
   int portVal;
   if (Serial.list().length > 6) {
-    portVal = 7;
+    portVal = 6;
   }
   else {
     portVal = 0;
   }
   println("selected port: " + portVal + " -- " + Serial.list()[portVal]);  
   String portName = Serial.list()[portVal];
-  myPort = new Serial(this, portName, 115200);
+  myPort = new Serial(this, portName, 9600);
 
 
   //create p5 knobs
