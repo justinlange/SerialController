@@ -81,6 +81,8 @@ void readSerialNums(){
 }
 
 void runPins(){
+  
+  debugString("inside of runPins");
 
   for (int thisPin = 0; thisPin < 18; thisPin++) { 
     digitalWrite(stringPos[thisPin], HIGH);

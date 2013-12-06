@@ -10,7 +10,7 @@ long timer;
 
 
 int mDelay = 200;   
-int mDelayS = 20;
+int mDelayS = 50;
 int pHigh = 255;
 int pLow = 210;
 
@@ -20,7 +20,7 @@ int brightPin = 0;
 int strikingPin = 0;
 
 boolean percusBool = false;
-boolean debugBool = true;
+boolean debugBool = false;
 boolean firstCall = false;
 
 boolean dChordState, minChordState, allPwmState, aChordState, minChordBool, gChordState, percusState, hamState;
@@ -29,7 +29,29 @@ int minChordCount = 0;
 const int switchPins[] = {24,22,44,46,50,48,40,42,34,38,30,26}; //on board
 const int ledPins[] = { 23,25,49,47,27,51,45,43,39,41,31,35 };
 const int stringPins[] = {2,3,4,5,6,7,8,9,10,11,12,13,28,29,32,33,36,37 };
-int s1f1,s2f1,s3f1,s4f1,s5f1,s6f1,s1f2,s2f2,s3f2,s4f2,s5f2,s6f2,s1f3,s2f3,s3f3,s4f3,s5f3,s6f3;
+//int s1f1,s2f1,s3f1,s4f1,s5f1,s6f1,s1f2,s2f2,s3f2,s4f2,s5f2,s6f2,s1f3,s2f3,s3f3,s4f3,s5f3,s6f3;
+
+int s1f1 = 33;
+int s2f1 = 9;
+int s3f1 = 2; 
+int s4f1 = 11;
+int s5f1 = 32; 
+int s6f1 = 7;
+int s1f2 = 28;
+int s2f2 = 10;
+int s3f2 = 3;
+int s4f2 = 29;
+int s5f2 = 5;
+int s6f2 = 37;
+int s1f3 = 8;
+int s2f3 = 6;
+int s3f3 = 4; 
+int s4f3 = 12;
+int s5f3 = 13;
+int s6f3 = 36;
+
+
+
 const int stringPos [] = {
   s1f1,s2f1,s3f1,s4f1,s5f1,s6f1,s1f2,s2f2,s3f2,s4f2,s5f2,s6f2,s1f3,s2f3,s3f3,s4f3,s5f3,s6f3};
 
@@ -51,7 +73,7 @@ short phraseLength = 1000;
 
 void setup() {
   
-  initPins();
+  //initPins();
   Serial.begin(9600);
   oscSerial.begin(Serial); 
 
@@ -81,6 +103,7 @@ void loop() {
   // important! 
   oscSerial.listen();
  
+ //debugString("inside of loop");
   
   //runLeds();
   //runPins();
@@ -91,7 +114,7 @@ void loop() {
   //evalPercus();
   //readSerial();
   // readSerialNums();
-  //delay(2);
+  delay(2);
 
   runPercusSimple(pinStrikes, phraseLength);
 
@@ -100,7 +123,7 @@ void loop() {
 void oscEvent(OscMessage &m) { // *note the & before msg
   // receive a message 
   //Serial.print(m.getInt(0));
-  m.plug("/rep", sendOSCBack); 
+  m.plug("/rep", setReps); 
   m.plug("/pwm", sendOSCBack);
   m.plug("/write", sendOSCBack);
 
@@ -117,6 +140,18 @@ void myFunction(OscMessage &m) {  // *note the & before msg
 
 void sendOSCBack(OscMessage &m) {
   oscSerial.send(m);
+}
+
+void setReps(OscMessage &m){
+  
+  firstCall = true;
+
+  
+  int rPin = m.getInt(0);
+  int rVal = m.getInt(1);
+  pinStrikes[rPin] = rVal;
+  repsCompleted[rPin] = pinStrikes[rPin];   
+  
 }
 
 /*
