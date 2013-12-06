@@ -13,6 +13,7 @@ OscP5 oscP5;
 NetAddress myRemoteLocation;
 
 ArrayList<OscMessage> messages;
+int knobMapping[] = {0,1,2,3,4,5,6,0,0,7,8,9,10,11,12,0,0,13,14,15,16,17,18};
 
 
 void setup() {
@@ -55,6 +56,12 @@ void mousePressed() {
   oscP5.send(myMessage, myRemoteLocation);
 }
 
+void beatTest(){
+  
+  
+  
+}
+
 
 
 /* incoming osc message are forwarded to the oscEvent method. */
@@ -65,16 +72,16 @@ void oscEvent(OscMessage theOscMessage) {
 
     if (theOscMessage.checkTypetag("fff")) {
       String sGroup = "/rep";
-      parseBCR(theOscMessage, sGroup);   
+      parseBCR(theOscMessage, sGroup, true);   
     }else if (theOscMessage.checkTypetag("ffi")) {
       String sGroup = "/pwm";
-      parseBCR(theOscMessage, sGroup);
+      parseBCR(theOscMessage, sGroup,false);
     }else if (theOscMessage.checkTypetag("fif")) {
       String sGroup = "/write";
-      parseBCR(theOscMessage, sGroup);
+      parseBCR(theOscMessage, sGroup, false);
     }else if (theOscMessage.checkTypetag("fii")) {
       String sGroup = "/seq";
-      parseBCR(theOscMessage, sGroup);
+      parseBCR(theOscMessage, sGroup, false);
     }else if (theOscMessage.checkTypetag("fiii")) {
       //debugOne("getting fiii ", 0);
       sendMessages();
@@ -102,26 +109,27 @@ void sendMessages(){
   }
 }
 
-void parseBCR(OscMessage theOscMessage, String sGroup) {      
+void parseBCR(OscMessage theOscMessage, String sGroup, boolean remap) {      
       int knobNumber = getNum(theOscMessage.addrPattern());
-      int tVar = int(theOscMessage.get(0).floatValue()*100);
+      if(remap) knobNumber = knobMapping[knobNumber];
+      int tVar = int(theOscMessage.get(0).floatValue()*1000);
       OscMessage myMessage = new OscMessage(sGroup);
       myMessage.add(knobNumber);
       myMessage.add(tVar);     
       messages.add(myMessage);
       
-      /*
+      
       if(timeCheck()){
         oscP5.send(myMessage, myRemoteLocation);
-        debugTwo("rep value", theOscMessage.get(0).floatValue(), "knobNumber", knobNumber);
+        debugTwo(theOscMessage.addrPattern(), tVar, "knobNumber", knobNumber);
       }
       //println(myMessage);
-      */
+      
 }
 
 boolean timeCheck(){
   long now = millis();
-  if (now-timer > 100) {       
+  if (now-timer > 10) {       
     timer = millis();
     return true;
   }else{

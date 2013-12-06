@@ -29,12 +29,21 @@ boolean printStuff = true;
 long timer;
 int interval;
 
-Dot[] dots;
-Dot myDot = new Dot(500, 500, 100);
+ArrayList<Dot> fretArray;
+
+Dot myDot;
+
+ControlTimer c;
 
 public void setup() { 
   size(1200, 800);
     createKnobs();
+    
+    c = new ControlTimer();
+    c.setSpeedOfTime(1);
+
+ fretArray = new ArrayList<Dot>();
+   
 
   setupMatrix();
   //setupDrumMachine();
@@ -65,7 +74,11 @@ if(serialOn){
 }
   //create p5 knobs
 
-  //createFretboard();
+  createDots();
+ 
+  
+  
+  
 }
 
 
@@ -97,13 +110,19 @@ public void draw() {
 
   //myDot.drawCircle();
   /*
-  for (int i=0;i<17;i++){
+  for (int i=0;i<16;i++){
    dots[i].drawCircle(); 
    }
    */
-
+   
+  resetKnobColor();
   drawFrets();
 }
+
+
+
+
+
 
 void oscEvent(OscMessage theOscMessage) {
     if (theOscMessage.isPlugged()==false) {

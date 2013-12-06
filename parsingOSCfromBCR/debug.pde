@@ -42,7 +42,7 @@ void debugTwo(String firstString, float firstInt, String secondString, float sec
     }
 }
 
-void debugTwo(String firstString, int firstInt, String secondString, float secondInt){
+void debugTwo(String firstString, long firstInt, String secondString, float secondInt){
     if(printStuff){
 
   print(firstString);
@@ -55,7 +55,7 @@ void debugTwo(String firstString, int firstInt, String secondString, float secon
     }
 }
 
-void debugTwo(String firstString, float firstInt, String secondString, int secondInt){
+void debugTwo(String firstString, float firstInt, String secondString, long secondInt){
     if(printStuff){
 
   print(firstString);

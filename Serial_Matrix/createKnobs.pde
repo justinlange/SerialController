@@ -1,6 +1,13 @@
-color darkBlue = color(40,40,240);
-color lightBlue = color(100,100,240);
-color highlight = color(200,200,255);
+color darkBlue = color(40,40,180);
+color lightBlue = color(80,80,180);
+color highlight = color(120,120,200);
+color darkRed = color(100,0,0);
+color lightRed = color(160,20,20);
+
+
+float a;
+float n = 255;
+int resetKnob;
 
 void createKnobs(){
 
@@ -63,8 +70,8 @@ cp5 = new ControlP5(this);
           ;  
       
       cp5.addKnob("Tknob" + counter)
-          .setColorBackground(color(100, 20, 25))  
-          .setColorForeground(color(140, 40, 65))      
+          .setColorBackground(darkRed)  
+          .setColorForeground(lightRed)      
           .setColorActive(color(255, 40, 65))        
           .setRange(5, 500)
           .setValue(50)
@@ -83,20 +90,33 @@ cp5 = new ControlP5(this);
 }
 
 void flashKnob(int theY) {
-  
-  boolean waiting = true;
-  long now = millis();
+
+
   cp5.get(Knob.class,"knob"+theY).setColorBackground(highlight);
-      cp5.get(Knob.class,"knob"+theY).setColorBackground(darkBlue);
+  resetKnob =  theY;
+  knobTimer[theY] = millis();
 
+}
+
+long[] knobTimer = new long[20];
+
+void resetKnobColor() {
   
-  while(waiting){
-        println("inside of waiting");
-
-    if(millis() > now+150){
-      println("inside of millis check");
-      cp5.get(Knob.class,"knob"+theY).setColorBackground(darkBlue);
-      waiting = false;
-    } 
+ for(int i=1;i<19;i++){   
+  if(millis() > knobTimer[i] + 100) {
+      cp5.get(Knob.class,"knob"+i).setColorBackground(darkBlue);
+    }    
   }
 }
+
+
+/*
+void updateColor() {
+  if(a>blueAtRest){
+   a -= .1;
+  }
+  for(int i=1;i<19;i++){
+    cp5.get(Knob.class,"knob"+i).setColorBackground(color(80,80,a));
+  }
+}
+*/
