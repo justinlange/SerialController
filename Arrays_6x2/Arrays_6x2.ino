@@ -1,5 +1,3 @@
-/*
-
 // MESSAGE PROTOCOL OBJECT
 #include <OscSerial.h>
 
@@ -10,7 +8,6 @@
 OscSerial oscSerial;
 long timer;
 
-*/
 
 int mDelay = 200;   
 int mDelayS = 20;
@@ -56,7 +53,7 @@ void setup() {
   
   initPins();
   Serial.begin(9600);
- // oscSerial.begin(Serial); 
+  oscSerial.begin(Serial); 
 
 
   for (int thisPin = 0; thisPin < LedPinCount; thisPin++)  pinMode(ledPins[thisPin], OUTPUT);      
@@ -79,9 +76,11 @@ void loop() {
     timer = now;
   }
   
+  */
+  
   // important! 
   oscSerial.listen();
-  */
+ 
   
   //runLeds();
   //runPins();
@@ -98,6 +97,29 @@ void loop() {
 
 }
 
+void oscEvent(OscMessage &m) { // *note the & before msg
+  // receive a message 
+  //Serial.print(m.getInt(0));
+  m.plug("/rep", sendOSCBack); 
+  m.plug("/pwm", sendOSCBack);
+  m.plug("/write", sendOSCBack);
+
+ //oscSerial.send(m);
+
+}
+
+void myFunction(OscMessage &m) {  // *note the & before msg
+  // getting to the message data 
+  int value = m.getInt(0); 
+  if (value == 0) digitalWrite(13, LOW);
+  if (value == 1) digitalWrite(13, HIGH);
+}
+
+void sendOSCBack(OscMessage &m) {
+  oscSerial.send(m);
+}
+
+/*
 void serialEvent(){
   
   char evalChar = (char)Serial.read();
@@ -156,19 +178,6 @@ void readSerialPhrase(){
     } 
   }
 }   
-/*
-void oscEvent(OscMessage &m) { // *note the & before msg
-  // receive a message 
-  m.plug("/led", myFunction); 
-}
-
-
-void myFunction(OscMessage &m) {  // *note the & before msg
-  // getting to the message data 
-  int value = m.getInt(0); 
-  if (value == 0) digitalWrite(13, LOW);
-  if (value == 1) digitalWrite(13, HIGH);
-}
 
 */
 
