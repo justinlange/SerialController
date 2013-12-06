@@ -38,9 +38,12 @@ void loop() {
 void oscEvent(OscMessage &m) { // *note the & before msg
   // receive a message 
   //Serial.print(m.getInt(0));
- oscSerial.send(m);
+  m.plug("/rep", sendOSCBack); 
+  m.plug("/pwm", sendOSCBack);
+  m.plug("/write", sendOSCBack);
 
-  //m.plug("/", sendOSCBack); 
+ //oscSerial.send(m);
+
 }
 
 void myFunction(OscMessage &m) {  // *note the & before msg
