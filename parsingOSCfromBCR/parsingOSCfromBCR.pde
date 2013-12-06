@@ -3,7 +3,8 @@
  * example shows how to send and receive osc messages.
  * oscP5 website at http://www.sojamo.de/oscP5
  */
-boolean printStuff = false;
+boolean printStuff = true;
+long timer;
 
 import oscP5.*;
 import netP5.*;
@@ -11,7 +12,12 @@ import netP5.*;
 OscP5 oscP5;
 NetAddress myRemoteLocation;
 
+ArrayList<OscMessage> messages;
+
+
 void setup() {
+  messages = new ArrayList<OscMessage>();
+  timer = millis();
   size(400, 400);
   frameRate(25);
   /* start oscP5, listening for incoming messages at port 12000 */
@@ -69,6 +75,9 @@ void oscEvent(OscMessage theOscMessage) {
     }else if (theOscMessage.checkTypetag("fii")) {
       String sGroup = "/seq";
       parseBCR(theOscMessage, sGroup);
+    }else if (theOscMessage.checkTypetag("fiii")) {
+      //debugOne("getting fiii ", 0);
+      sendMessages();
     }else{
       print("osc message not mapped: " + theOscMessage);
       print(" addrpattern: "+theOscMessage.addrPattern());
@@ -77,15 +86,48 @@ void oscEvent(OscMessage theOscMessage) {
   }
 }
 
+void sendMessages(){
+  boolean[] dupes = new boolean[256];
+  for(int i=0;i<256;i++){
+   dupes[i]=false; 
+  }
+  for(int i = messages.size()-1; i >= 0; i--){
+    int knobNumber = messages.get(i).get(0).intValue();
+    if(dupes[knobNumber] == false){
+      oscP5.send(messages.get(i), myRemoteLocation);
+      println(knobNumber + "  " + i + "  " + messages.get(i).addrPattern());
+      dupes[knobNumber] = true;
+    }
+    messages.remove(i);
+  }
+}
+
 void parseBCR(OscMessage theOscMessage, String sGroup) {      
       int knobNumber = getNum(theOscMessage.addrPattern());
       int tVar = int(theOscMessage.get(0).floatValue()*100);
       OscMessage myMessage = new OscMessage(sGroup);
       myMessage.add(knobNumber);
-      myMessage.add(tVar);
-      oscP5.send(myMessage, myRemoteLocation);
-      debugTwo("rep value", theOscMessage.get(0).floatValue(), "knobNumber", knobNumber);
+      myMessage.add(tVar);     
+      messages.add(myMessage);
+      
+      /*
+      if(timeCheck()){
+        oscP5.send(myMessage, myRemoteLocation);
+        debugTwo("rep value", theOscMessage.get(0).floatValue(), "knobNumber", knobNumber);
+      }
       //println(myMessage);
+      */
+}
+
+boolean timeCheck(){
+  long now = millis();
+  if (now-timer > 100) {       
+    timer = millis();
+    return true;
+  }else{
+    return false;
+  }
+  
 }
 
 void sendMessage() {

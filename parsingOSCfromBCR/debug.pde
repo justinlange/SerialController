@@ -7,6 +7,15 @@ void debugOne(String firstString, long firstInt){
     }
 }
 
+void debugOne(String firstString, String secondString){
+    if(printStuff){
+
+  print(firstString);
+  print(": ");
+  println(secondString);
+    }
+}
+
 void debugTwo(String firstString, long firstInt, String secondString, long secondInt){
     if(printStuff){
 

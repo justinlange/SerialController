@@ -63,16 +63,22 @@ int mouseStepY = 0;
 // incoming osc message are forwarded to the oscEvent method. 
 void oscEvent(OscMessage theOscMessage) {
   print("osc event!    ");
-  if (theOscMessage.addrPattern().equals("/analog/0")){
-    analogValue0 = theOscMessage.get(0).intValue();
-  } else if(theOscMessage.addrPattern().equals("/analog/1")){
-    analogValue1 = theOscMessage.get(0).intValue();
-  } else if(theOscMessage.addrPattern().equals("/digital/5")){
-    digitalValue5 = theOscMessage.get(0).stringValue();
+  print("pattern: " + theOscMessage.addrPattern());
+
+  if (theOscMessage.addrPattern().equals("/rep")){
+      print(theOscMessage.get(0).intValue());
+      print(theOscMessage.get(1).intValue());
+
+
+  } else if(theOscMessage.addrPattern().equals("/pwm")){
+      print(theOscMessage.get(0).intValue());
+      print(theOscMessage.get(1).intValue());  
+  } else if(theOscMessage.addrPattern().equals("/write")){
+      print(theOscMessage.get(0).intValue());
+      print(theOscMessage.get(1).intValue());   
   } else if(theOscMessage.addrPattern().equals("/mouse/step")){
      mouseStepX = theOscMessage.get(0).intValue();
      mouseStepY = theOscMessage.get(1).intValue();
   }
-  print
-  println("pattern: " + theOscMessage.addrPattern());
+  println(" ");
 }

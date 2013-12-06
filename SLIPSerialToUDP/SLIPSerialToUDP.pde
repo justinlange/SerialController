@@ -199,7 +199,7 @@ String[] serialRateStrings = {
   "300", "1200", "2400", "4800", "9600", "14400", 
   "19200", "28800", "38400", "57600", "115200"
 };
-int baud = 9600;
+int baud = 115200;
 int serialListNumber = 0;
 
 ArrayList<Byte> serialBuffer = new ArrayList<Byte>();
@@ -326,10 +326,11 @@ void UDPSendBuffer(byte[] data) {
 
 //called when UDP recieves some data
 void receive( byte[] data) {
+    //println("data: " + data);
+
   drawIncomingUDP();
   //send it over to serial
   serialSend(data);
-  //println("data: " + data);
 }
 
 /************************************************************************************
