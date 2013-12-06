@@ -4,6 +4,7 @@
  int numFrets = 5;
  int vSpacing = hSpacing*4;
  int offset = hSpacing;
+
 /*
 void createFretboard() {
   int counter = 0;
@@ -18,7 +19,7 @@ void createFretboard() {
 */
 
 
-/*
+
 void drawFrets() {
  stroke(200);
  strokeWeight(2); 
@@ -50,6 +51,6 @@ for(int i=0;i<6;i++){
 }
 
 
-*/
+
 
 

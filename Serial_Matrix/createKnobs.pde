@@ -1,3 +1,7 @@
+color darkBlue = color(40,40,240);
+color lightBlue = color(100,100,240);
+color highlight = color(200,200,255);
+
 void createKnobs(){
 
 cp5 = new ControlP5(this);
@@ -15,15 +19,15 @@ cp5 = new ControlP5(this);
         ;
 
 
-  cp5.addKnob("delay")
-      .setRange(0, 100)
-      .setValue(50)
+  cp5.addKnob("interval")
+      .setRange(0, 500)
+      .setValue(125)
       .setPosition(0, 0)
       .setRadius(50)
       .setSize(size, size)
       .setDragDirection(Knob.HORIZONTAL)
       .setGroup(g1)
-      .setCaptionLabel("delay")
+      .setCaptionLabel("interval")
       .setBroadcast(true)
       .setId(19)
                           ; 
@@ -44,8 +48,10 @@ cp5 = new ControlP5(this);
 
 
       cp5.addKnob("knob" + counter)
+          .setColorBackground(darkBlue)  
+          .setColorForeground(lightBlue)  
           .setRange(0, 99)
-          .setValue(3)
+          .setValue(0)
           .setPosition(0, size/2)
           .setRadius(spacing/2)
           .setSize(size/2, size/2)
@@ -73,5 +79,24 @@ cp5 = new ControlP5(this);
           ;  
 
     }
+  }
+}
+
+void flashKnob(int theY) {
+  
+  boolean waiting = true;
+  long now = millis();
+  cp5.get(Knob.class,"knob"+theY).setColorBackground(highlight);
+      cp5.get(Knob.class,"knob"+theY).setColorBackground(darkBlue);
+
+  
+  while(waiting){
+        println("inside of waiting");
+
+    if(millis() > now+150){
+      println("inside of millis check");
+      cp5.get(Knob.class,"knob"+theY).setColorBackground(darkBlue);
+      waiting = false;
+    } 
   }
 }

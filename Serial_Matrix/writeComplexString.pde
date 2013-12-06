@@ -49,7 +49,7 @@ void writeComplexString(char letter) {
       //0-250 represent values, which give sme four remaining characters for special purposes (delimiter, end of packet, etc)
       
       if(writeString.getBytes().length < 64){
-            myPort.write(writeString);
+            if(serialOn) myPort.write(writeString);
             print("good repsString write! byteSize = " + writeString.getBytes().length +  "  string written: " + writeString);
       }else{
         println("string too long! ");
