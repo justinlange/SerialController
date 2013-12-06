@@ -25,6 +25,12 @@ void writeBack(int knobNumber, int tVar) {
 
 void repWrite(OSCMessage &msg)
 {
+  
+  pinMode(13,OUTPUT);
+  digitalWrite(13,HIGH);
+  delay(100);
+  digitalWrite(13,LOW);
+ 
   int knobNumber,tVar;
   
   knobNumber = msg.getInt(0);
@@ -58,24 +64,25 @@ void loop(){
           bundleIN.fill(SLIPSerial.read());
      }
   
-  if(!bundleIN.hasError()){
+  //if(!bundleIN.hasError()){
    bundleIN.dispatch("/rep", repWrite);
-  }
+  //}
 /*
     OSCBundle bndl;
     //BOSCBundle's add' returns the OSCMessage so the message's 'add' can be composed together
     bndl.add("/analog/0").add((int32_t)analogRead(0));
     bndl.add("/analog/1").add((int32_t)analogRead(1));
 
-
-    bundleIN.add("/digital/5").add((digitalRead(5)==HIGH)?"HIGH":"LOW");
+*/
+    int testInt = 5;
+    bundleIN.add("/rep").add(testInt);
 
     SLIPSerial.beginPacket();
     bundleIN.send(SLIPSerial); // send the bytes to the SLIP stream
     SLIPSerial.endPacket(); // mark the end of the OSC Packet
     bundleIN.empty(); // empty the bundle to free room for a new one
 
-*/
+
     delay(50);
 
 

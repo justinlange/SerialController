@@ -21,10 +21,13 @@ void loop() {
   long now = millis();
   if (now-timer > 100) {
     
+    /*
     OscMessage msg("/helloFromArduino");
-    msg.add("another string"); // <-- this could be any data 
+    msg.add(0); // <-- this could be any data 
     oscSerial.send(msg);       
     timer = now;
+    
+    */
   }
   
   // important! 
@@ -34,7 +37,10 @@ void loop() {
 
 void oscEvent(OscMessage &m) { // *note the & before msg
   // receive a message 
-  m.plug("/led", myFunction); 
+  //Serial.print(m.getInt(0));
+ oscSerial.send(m);
+
+  //m.plug("/", sendOSCBack); 
 }
 
 void myFunction(OscMessage &m) {  // *note the & before msg
@@ -42,4 +48,8 @@ void myFunction(OscMessage &m) {  // *note the & before msg
   int value = m.getInt(0); 
   if (value == 0) digitalWrite(13, LOW);
   if (value == 1) digitalWrite(13, HIGH);
+}
+
+void sendOSCBack(OscMessage &m) {
+  oscSerial.send(m);
 }
