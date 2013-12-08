@@ -80,7 +80,7 @@ cp5 = new ControlP5(this);
           .setColorBackground(darkRed)  
           .setColorForeground(lightRed)      
           .setColorActive(color(255, 40, 65))        
-          .setRange(5, 500)
+          .setRange(0, 500)
           .setValue(50)
           .setPosition(0, 0)
           .setRadius(size/2)

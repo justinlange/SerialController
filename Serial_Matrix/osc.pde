@@ -25,6 +25,10 @@ void oscEvent(OscMessage theOscMessage) {
       String sGroup = "/buttons";
       parseBCRbuttons(theOscMessage, sGroup);
     }
+   else if (theOscMessage.checkTypetag("ffif")) {
+      String sGroup = "/mb";
+      parseMbKnobs(theOscMessage, sGroup, true, true);  
+    }
     else {
       print("osc message not mapped: " + theOscMessage);
       print(" addrpattern: "+theOscMessage.addrPattern());
@@ -55,8 +59,16 @@ void parseBCRbuttons(OscMessage theOscMessage, String sGroup) {
   println("buttonNumber: " + buttonNumber + " state: " + tVar);
 
   switch(buttonNumber) {
-  case 107:    
-    sendMessages();
+  case 106:
+    if(serialMode) writeComplexString('d');
+    break;
+  case 107:
+    if(serialMode) { 
+      writeComplexString('p');
+    }else{
+      sendMessages();
+    }
+    break;
   case 108:    
     cp5.get(Toggle.class, "freeMode").setState(!tVar);
     sendMessages();
@@ -76,6 +88,18 @@ void parseWriteKnobs(OscMessage theOscMessage, String sGroup, boolean remap, boo
     myMessage.add(knobNumber);
     myMessage.add(tVar); 
     messages.add(myMessage);
+  }
+}
+
+
+void parseMbKnobs(OscMessage theOscMessage, String sGroup, boolean remap, boolean setSoft) {      
+  int knobNumber = getNum(theOscMessage.addrPattern());
+  knobNumber = knobNumber -24;
+  int tVar = int(theOscMessage.get(0).floatValue()*100);
+  println(sGroup+knobNumber+tVar);
+  
+  if (setSoft) {
+    cp5.get(Knob.class, "Tknob"+knobNumber).setValue(tVar*5);
   }
 }
 

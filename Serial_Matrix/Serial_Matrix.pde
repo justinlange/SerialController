@@ -164,8 +164,8 @@ void keyPressed() {
     if (key==' ') writeComplexString('p');      
     if (key=='d') writeComplexString('d');
     if (key=='o') {
-      if (cp5.getGroup("g1")!=null) {
 
+      if (cp5.getGroup("g1")!=null) {
         int counter = 0;                
         for (int i=0;i<6;i++) {
           for (int j=0;j<3;j++) { 
