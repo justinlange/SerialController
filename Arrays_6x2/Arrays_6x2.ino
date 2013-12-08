@@ -74,7 +74,7 @@ short phraseLength = 1000;
 void setup() {
   
   //initPins();
-  Serial.begin(9600);
+  Serial.begin(115200);
   oscSerial.begin(Serial); 
 
 

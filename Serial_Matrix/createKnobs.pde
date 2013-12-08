@@ -95,6 +95,8 @@ void flashKnob(int theY) {
   cp5.get(Knob.class,"knob"+theY).setColorBackground(highlight);
   resetKnob =  theY;
   knobTimer[theY] = millis();
+  fretArray.get(theY-1).on();
+  
 
 }
 
@@ -105,6 +107,8 @@ void resetKnobColor() {
  for(int i=1;i<19;i++){   
   if(millis() > knobTimer[i] + 100) {
       cp5.get(Knob.class,"knob"+i).setColorBackground(darkBlue);
+      fretArray.get(i-1).off();
+
     }    
   }
 }

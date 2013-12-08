@@ -21,11 +21,14 @@ class Dot {
    }
    
    void on(){
-     fillc=200;
+     fillc=255;
+     fillo = 200; 
+
    }
    
    void off(){
-     fillc=50;   
+     fillc=50;
+     fillo=200;   
    }
 }
 
