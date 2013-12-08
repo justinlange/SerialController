@@ -26,9 +26,12 @@ boolean firstCall = false;
 boolean dChordState, minChordState, allPwmState, aChordState, minChordBool, gChordState, percusState, hamState;
 int minChordCount = 0;
 
-const int switchPins[] = {24,22,44,46,50,48,40,42,34,38,30,26}; //on board
-const int ledPins[] = { 23,25,49,47,27,51,45,43,39,41,31,35 };
-const int stringPins[] = {2,3,4,5,6,7,8,9,10,11,12,13,28,29,32,33,36,37 };
+const int switchPins[] = {
+  24,22,44,46,50,48,40,42,34,38,30,26}; //on board
+const int ledPins[] = { 
+  23,25,49,47,27,51,45,43,39,41,31,35 };
+const int stringPins[] = {
+  2,3,4,5,6,7,8,9,10,11,12,13,28,29,32,33,36,37 };
 //int s1f1,s2f1,s3f1,s4f1,s5f1,s6f1,s1f2,s2f2,s3f2,s4f2,s5f2,s6f2,s1f3,s2f3,s3f3,s4f3,s5f3,s6f3;
 
 int s1f1 = 33;
@@ -69,13 +72,14 @@ short phraseLength = 1000;
 
 //------ OSC -------- //
 
-
+boolean oscMode = false;
 
 void setup() {
-  
+
   //initPins();
   Serial.begin(115200);
-  oscSerial.begin(Serial); 
+
+  if(oscMode)  oscSerial.begin(Serial); 
 
 
   for (int thisPin = 0; thisPin < LedPinCount; thisPin++)  pinMode(ledPins[thisPin], OUTPUT);      
@@ -88,23 +92,23 @@ void setup() {
 
 
 void loop() {
-/*
+  /*
     long now = millis();
-  if (now-timer > 100) {
-    
-    OscMessage msg("/helloFromArduino");
-    msg.add("another string"); // <-- this could be any data 
-    oscSerial.send(msg);       
-    timer = now;
-  }
-  
-  */
-  
+   if (now-timer > 100) {
+   
+   OscMessage msg("/helloFromArduino");
+   msg.add("another string"); // <-- this could be any data 
+   oscSerial.send(msg);       
+   timer = now;
+   }
+   
+   */
+
   // important! 
-  oscSerial.listen();
- 
- //debugString("inside of loop");
-  
+  if(oscMode)  oscSerial.listen();
+
+  //debugString("inside of loop");
+
   //runLeds();
   //runPins();
   //debugMode();
@@ -123,11 +127,12 @@ void loop() {
 void oscEvent(OscMessage &m) { // *note the & before msg
   // receive a message 
   //Serial.print(m.getInt(0));
+  if(oscMode) {
   m.plug("/rep", setReps); 
   m.plug("/pwm", sendOSCBack);
   m.plug("/write", setWriteHigh);
-
- //oscSerial.send(m);
+  }
+  //oscSerial.send(m);
 
 }
 
@@ -143,41 +148,43 @@ void sendOSCBack(OscMessage &m) {
 }
 
 void setReps(OscMessage &m){
-  
+
   firstCall = true;
 
-  
+
   int rPin = m.getInt(0);
   int rVal = m.getInt(1);
   pinStrikes[rPin] = rVal;
   millisBetween[rPin] = 100/rVal;
   repsCompleted[rPin] = pinStrikes[rPin];   
-  
+
 }
 
 void setWriteHigh(OscMessage &m){
-  
+
   //firstCall = true;
 
   int rPin = m.getInt(0);
   int rVal = m.getInt(1);
- 
- for(int i=0;i<18;i++){ 
-  writeHighLength[rPin] = max(rVal-millisBetween[i],1);
- }
+
+  for(int i=0;i<18;i++){ 
+    writeHighLength[rPin] = max(rVal-millisBetween[i],1);
+  }
 }
 
 
-/*
+
 void serialEvent(){
-  
+
   char evalChar = (char)Serial.read();
-  
+
   if (evalChar == 'd'){
     readSerialData();
-  }else if (evalChar == 'p'){
+  }
+  else if (evalChar == 'p'){
     readSerialPhrase(); 
-  }else if (evalChar == 'l'){
+  }
+  else if (evalChar == 'l'){
     writeLow(); 
   }
 
@@ -188,7 +195,7 @@ void readSerialData(){
   debugString("found a d!");   
 
   int byteCounter = 0;
-  
+
   for(int i=0;i<18;i++)   {
     if(Serial.peek()  > -1 ){
       byteCounter++;
@@ -228,12 +235,12 @@ void readSerialPhrase(){
   }
 }   
 
-*/
+
 
 
 void writeLow(){
   debugString("found an l");
-  
+
   for(int i=0;i<18;i++) { 
     digitalWrite(stringPos[i], LOW);   
   }
@@ -311,5 +318,7 @@ void readSerial(){
  
  
  */
+
+
 
 
