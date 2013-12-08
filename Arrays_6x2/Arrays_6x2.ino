@@ -125,7 +125,7 @@ void oscEvent(OscMessage &m) { // *note the & before msg
   //Serial.print(m.getInt(0));
   m.plug("/rep", setReps); 
   m.plug("/pwm", sendOSCBack);
-  m.plug("/write", sendOSCBack);
+  m.plug("/write", setWriteHigh);
 
  //oscSerial.send(m);
 
@@ -150,9 +150,23 @@ void setReps(OscMessage &m){
   int rPin = m.getInt(0);
   int rVal = m.getInt(1);
   pinStrikes[rPin] = rVal;
+  millisBetween[rPin] = 100/rVal;
   repsCompleted[rPin] = pinStrikes[rPin];   
   
 }
+
+void setWriteHigh(OscMessage &m){
+  
+  //firstCall = true;
+
+  int rPin = m.getInt(0);
+  int rVal = m.getInt(1);
+ 
+ for(int i=0;i<18;i++){ 
+  writeHighLength[rPin] = max(rVal-millisBetween[i],1);
+ }
+}
+
 
 /*
 void serialEvent(){

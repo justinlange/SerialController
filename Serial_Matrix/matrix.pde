@@ -38,7 +38,7 @@ void myMatrix(int theX, int theY) {
   int reps = int(cp5.get(Knob.class,"knob"+theY).getValue());
   flashKnob(theY);
   sendOSCMessage("/rep",theY, reps);
-  println("osc message send: /rep" + theY + " , " + reps);
+  //println("osc message send: /rep " + theY + " , " + reps);
   
   //println("got it: "+theX+", "+theY);
   d[theX][theY].update();

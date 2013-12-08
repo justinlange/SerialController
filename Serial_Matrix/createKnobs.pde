@@ -7,6 +7,7 @@ color lightRed = color(160,20,20);
 float a;
 float n = 255;
 int resetKnob;
+boolean freeMode;
 
 void createKnobs(){
 
@@ -36,6 +37,13 @@ cp5 = new ControlP5(this);
       .setCaptionLabel("interval")
       .setBroadcast(true)
       .setId(19)
+      ;
+      
+   cp5.addToggle("freeMode")
+     .setPosition(spacing,0)
+     .setSize(50,20)
+     .setGroup(g1)
+     ;  
                           ; 
   color red = color(255,0,0);
 
