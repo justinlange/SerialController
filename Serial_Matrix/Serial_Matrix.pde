@@ -2,51 +2,38 @@ import processing.serial.*;
 import controlP5.*; 
 import oscP5.*;
 import netP5.*;
-
-
-
 import com.onformative.leap.LeapMotionP5;
 import com.leapmotion.leap.Finger;
-LeapMotionP5 leap;
 
+LeapMotionP5 leap;
+FingerCatcher fingerCatch;
 
 Serial myPort; 
 ControlP5 cp5;
 OscP5 oscP5;
 NetAddress myRemoteLocation;
-
+Dot myDot;
 
 ArrayList<OscMessage> messages;
 ArrayList<Dot> fretArray;
 
-int knobMapping[] = {0,1,2,3,4,5,6,0,0,7,8,9,10,11,12,0,0,13,14,15,16,17,18};
-
-FingerCatcher fingerCatch;
+int knobMapping[] = {
+  0, 1, 2, 3, 4, 5, 6, 0, 0, 7, 8, 9, 10, 11, 12, 0, 0, 13, 14, 15, 16, 17, 18
+};
 
 int delay = 10;
 boolean leapMode = false;
 boolean serialOn = false;
-
 boolean printStuff = true;
 long timer;
 int interval;
 
-
-Dot myDot;
-
-ControlTimer c;
-
 public void setup() { 
   size(1200, 800);
-    createKnobs();
-    
-    c = new ControlTimer();
-    c.setSpeedOfTime(1);
-
- fretArray = new ArrayList<Dot>();
-   
-
+  createKnobs();
   setupMatrix();
+
+  fretArray = new ArrayList<Dot>();
   //setupDrumMachine();
   //frameRate(8);
 
@@ -54,30 +41,23 @@ public void setup() {
   myRemoteLocation = new NetAddress("127.0.0.1", 9000);
 
   leap = new LeapMotionP5(this);
-
   if (leapMode) fingerCatch = new FingerCatcher(leap);
-
 
   println(Serial.list());
 
-if(serialOn){
-  int portVal;
-  if (Serial.list().length > 6) {
-    portVal = 6;
+  if (serialOn) {
+    int portVal;
+    if (Serial.list().length > 6) {
+      portVal = 6;
+    }
+    else {
+      portVal = 2;
+    }
+    println("selected port: " + portVal + " -- " + Serial.list()[portVal]);  
+    String portName = Serial.list()[portVal];
+    myPort = new Serial(this, portName, 9600);
   }
-  else {
-    portVal = 2;
-  }
-  println("selected port: " + portVal + " -- " + Serial.list()[portVal]);  
-  String portName = Serial.list()[portVal];
-  myPort = new Serial(this, portName, 9600);
-
-}
-  //create p5 knobs
-
   createDots();
-
-  
 }
 
 
@@ -93,72 +73,62 @@ public void draw() {
     //fingerCatch.buildSerialString();
     fingerCatch.clearVector();
   }
-  
-  //drawDrumMachine();
 
   /*
   for (Finger finger : leap.getFingerList()) {
-   PVector fingerPos = leap.getTip(finger);
-   //     checkRectSimple(fingerPos);
-   
+     PVector fingerPos = leap.getTip(finger);
+   //     checkRectSimple(fingerPos);  
    fill(255);
    ellipse(fingerPos.x, fingerPos.y, 10, 10);
    println("x: " + fingerPos.x + "  y:" + fingerPos.y + "  z: " + fingerPos.z);
    }
    */
 
-  //myDot.drawCircle();
-  /*
-  for (int i=0;i<16;i++){
-   dots[i].drawCircle(); 
-   }
-   */
-   
   resetKnobColor();
   drawFrets();
 }
 
 
-
-
-
-
 void oscEvent(OscMessage theOscMessage) {
-    if (theOscMessage.isPlugged()==false) {
+  if (theOscMessage.isPlugged()==false) {
     /* print the address pattern and the typetag of the received OscMessage */
-  
 
     if (theOscMessage.checkTypetag("fff")) {
       String sGroup = "/rep";
-      parseBCR(theOscMessage, sGroup, true);   
-    }else if (theOscMessage.checkTypetag("ffi")) {
+      parseBCR(theOscMessage, sGroup, true);
+    }
+    else if (theOscMessage.checkTypetag("ffi")) {
       String sGroup = "/pwm";
-      parseBCR(theOscMessage, sGroup,false);
-    }else if (theOscMessage.checkTypetag("fif")) {
+      parseBCR(theOscMessage, sGroup, false);
+    }
+    else if (theOscMessage.checkTypetag("fif")) {
       String sGroup = "/write";
       parseBCR(theOscMessage, sGroup, false);
-    }else if (theOscMessage.checkTypetag("fii")) {
+    }
+    else if (theOscMessage.checkTypetag("fii")) {
       String sGroup = "/seq";
       parseBCR(theOscMessage, sGroup, false);
-    }else if (theOscMessage.checkTypetag("fiii")) {
+    }
+    else if (theOscMessage.checkTypetag("fiii")) {
       //debugOne("getting fiii ", 0);
       sendMessages();
-    }else{
+    }
+    else {
       print("osc message not mapped: " + theOscMessage);
       print(" addrpattern: "+theOscMessage.addrPattern());
       println(" typetag: "+theOscMessage.typetag());
-    }  
+    }
   }
 }
 
-void sendMessages(){
+void sendMessages() {
   boolean[] dupes = new boolean[256];
-  for(int i=0;i<256;i++){
-   dupes[i]=false; 
+  for (int i=0;i<256;i++) {
+    dupes[i]=false;
   }
-  for(int i = messages.size()-1; i >= 0; i--){
+  for (int i = messages.size()-1; i >= 0; i--) {
     int knobNumber = messages.get(i).get(0).intValue();
-    if(dupes[knobNumber] == false){
+    if (dupes[knobNumber] == false) {
       oscP5.send(messages.get(i), myRemoteLocation);
       println(knobNumber + "  " + i + "  " + messages.get(i).addrPattern());
       dupes[knobNumber] = true;
@@ -167,55 +137,53 @@ void sendMessages(){
   }
 }
 
-    
 
 void parseBCR(OscMessage theOscMessage, String sGroup, boolean remap) {      
-      int knobNumber = getNum(theOscMessage.addrPattern());
-      if(remap) knobNumber = knobMapping[knobNumber];
-      int tVar = int(theOscMessage.get(0).floatValue()*100);
-      setSoftControl(knobNumber, tVar);
-      
-      OscMessage myMessage = new OscMessage(sGroup);
-      myMessage.add(knobNumber);
-      myMessage.add(tVar);   
-    
-    /*
+  int knobNumber = getNum(theOscMessage.addrPattern());
+  if (remap) knobNumber = knobMapping[knobNumber];
+  int tVar = int(theOscMessage.get(0).floatValue()*100);
+  setSoftControl(knobNumber, tVar);
+
+  OscMessage myMessage = new OscMessage(sGroup);
+  myMessage.add(knobNumber);
+  myMessage.add(tVar);   
+
+  /*
       if(timeCheck(10)){
-        oscP5.send(myMessage, myRemoteLocation);
-        debugTwo(theOscMessage.addrPattern(), tVar, "knobNumber", knobNumber);
-      }  
-      */
-      
+   oscP5.send(myMessage, myRemoteLocation);
+   debugTwo(theOscMessage.addrPattern(), tVar, "knobNumber", knobNumber);
+   }  
+   */
 }
 
-void  setSoftControl(int knobNumber, int tVar){
-    cp5.get(Knob.class,"knob"+knobNumber).setValue(tVar);
+void  setSoftControl(int knobNumber, int tVar) {
+  cp5.get(Knob.class, "knob"+knobNumber).setValue(tVar);
 }
 
 
-void sendOSCMessage(String sGroup, int knobNumber, int tVar){
-      OscMessage myMessage = new OscMessage(sGroup);
-      myMessage.add(knobNumber);
-      myMessage.add(tVar);   
-      oscP5.send(myMessage, myRemoteLocation);  
+void sendOSCMessage(String sGroup, int knobNumber, int tVar) {
+  OscMessage myMessage = new OscMessage(sGroup);
+  myMessage.add(knobNumber);
+  myMessage.add(tVar);   
+  oscP5.send(myMessage, myRemoteLocation);
 }
 
-int getNum(String addrPattern){
+int getNum(String addrPattern) {
   int knobNumber;
   String kString = addrPattern;
-      kString = kString.substring(8, kString.length() - 2);
-      return knobNumber = int(kString);
+  kString = kString.substring(8, kString.length() - 2);
+  return knobNumber = int(kString);
 }
 
-boolean timeCheck(int time){
+boolean timeCheck(int time) {
   long now = millis();
   if (now-timer > time) {       
     timer = millis();
     return true;
-  }else{
+  }
+  else {
     return false;
   }
-  
 }
 
 
@@ -233,7 +201,6 @@ void controlEvent(ControlEvent theEvent) {
   } 
   else if (theEvent.isController()) {
     //println("controller!");
-
     // int knobId = theEvent.getController().getId();
 
     if (theEvent.getController().getId() == 19) {
@@ -241,7 +208,6 @@ void controlEvent(ControlEvent theEvent) {
       resetInterval(interval);
       println("delay is now: " + interval);
     }
-
 
     /*
     println("got something from a controller "
@@ -254,10 +220,9 @@ void controlEvent(ControlEvent theEvent) {
 void serialString(int id) {
 }
 
-
 void keyPressed() {
-  
-   if (key=='1') {
+
+  if (key=='1') {
     cp5.get(Matrix.class, "myMatrix").set(0, 0, true);
   } 
   else if (key=='2') {
@@ -300,12 +265,6 @@ void keyPressed() {
     }
   }
 }
-
-
-
-
-
-
 
 
 

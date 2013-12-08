@@ -4,7 +4,6 @@ color highlight = color(120,120,200);
 color darkRed = color(100,0,0);
 color lightRed = color(160,20,20);
 
-
 float a;
 float n = 255;
 int resetKnob;
@@ -84,43 +83,9 @@ cp5 = new ControlP5(this);
           .setBroadcast(true)
           .setId(counter)
           ;  
-
     }
   }
 }
 
-void flashKnob(int theY) {
 
 
-  cp5.get(Knob.class,"knob"+theY).setColorBackground(highlight);
-  resetKnob =  theY;
-  knobTimer[theY] = millis();
-  fretArray.get(theY-1).on();
-  
-
-}
-
-long[] knobTimer = new long[20];
-
-void resetKnobColor() {
-  
- for(int i=1;i<19;i++){   
-  if(millis() > knobTimer[i] + 100) {
-      cp5.get(Knob.class,"knob"+i).setColorBackground(darkBlue);
-      fretArray.get(i-1).off();
-
-    }    
-  }
-}
-
-
-/*
-void updateColor() {
-  if(a>blueAtRest){
-   a -= .1;
-  }
-  for(int i=1;i<19;i++){
-    cp5.get(Knob.class,"knob"+i).setColorBackground(color(80,80,a));
-  }
-}
-*/

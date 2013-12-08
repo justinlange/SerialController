@@ -1,6 +1,18 @@
+class SerialValue {
+ 
+  int gridNumber;
+  float playThresh;
+  
+  SerialValue(int _gridNumber, float _playThresh){
+  gridNumber = _gridNumber;
+  playThresh = _playThresh;
+  }
+ 
+}
+
+//------end class--------//
+
 void serialString() {
-
-
 
     //every 30 milliseconds, send 18 bits
 
