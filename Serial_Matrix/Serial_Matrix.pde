@@ -23,8 +23,8 @@ int knobMapping[] = {
 
 int delay = 10;
 boolean leapMode = false;
-boolean serialOn = true;
-boolean serialMode = true;
+boolean serialOn = false;
+boolean serialMode = false;
 boolean printStuff = true;
 long timer;
 int interval;

@@ -261,39 +261,40 @@ void initPercusArrays(){
 
 void runPercusSimple(short _pinStrikes[], int _phraseLength) {
 
+  long now = millis();
 
   //Serial.println("inside of runPercusSimple!");
 
   if(firstCall){
     firstCall = false; 
     for(int i = 0; i < 18; i++){
-      lastMillis[i] = millis();
+      lastMillis[i] = now;
     }
   }
 
   for (int i = 0; i < 18; i++) { 
 
     if(pinStrikes[i] > 0 && repsCompleted[i] > 0){
-      if(millis() < lastMillis[i] + millisBetween[i] && millis() < lastMillis[i] + millisBetween[i] + writeHighLength[i]) {
+      if(now < lastMillis[i] + millisBetween[i] && now < lastMillis[i] + millisBetween[i] + writeHighLength[i]) {
         if(!highState[i]){
           digitalWrite(stringPos[i], HIGH);  
           debugTwo("writing HIGH to pin", stringPos[i], "at rep", repsCompleted[i]);
           highState[i] = true;
           debugThree(
-          "millis", millis(),
+          "millis", now,
           "lastMillis + millisBtween", lastMillis[i] + millisBetween[i],  
           "lastMillis + millisBetween + writeHighLength", lastMillis[i] + millisBetween[i] + writeHighLength[i] 
             );
         }
       }
       else{
-        lastMillis[i] = millis();    
+        lastMillis[i] = now;    
         digitalWrite(stringPos[i], LOW);
         repsCompleted[i]--;   
         debugTwo("writing LOW to pin", stringPos[i], "at rep", repsCompleted[i]);
         highState[i] = false;
         debugThree(
-        "millis", millis(),
+        "millis", now,
         "lastMillis + millisBtween", lastMillis[i] + millisBetween[i],  
         "lastMillis + millisBetween + writeHighLength", lastMillis[i] + millisBetween[i] + writeHighLength[i] 
           );

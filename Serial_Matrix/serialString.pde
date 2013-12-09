@@ -35,6 +35,9 @@ void serialString() {
     for (int i=0;i<18;i++) {
       iArray[i] = false;
     }
+    
+    //create an array of market characters
+      
 
   int counter = 0;
   for(int i=0;i<3;i++){
@@ -50,7 +53,7 @@ void serialString() {
   //after I have 3 bytes, send to serial
   
   //send a byte that is all ones....
- // Serial.write(myBytes, 3);  //look up syntax
+  myPort.write(myBytes);  //look up syntax
 
   }
 
