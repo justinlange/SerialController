@@ -20,7 +20,7 @@ int brightPin = 0;
 int strikingPin = 0;
 
 boolean percusBool = false;
-boolean debugBool = false;
+boolean debugBool = true;
 boolean firstCall = false;
 
 boolean dChordState, minChordState, allPwmState, aChordState, minChordBool, gChordState, percusState, hamState;
@@ -118,7 +118,7 @@ void loop() {
   //evalPercus();
   //readSerial();
   // readSerialNums();
-  delay(2);
+  //delay(2);
 
   runPercusSimple(pinStrikes, phraseLength);
 
@@ -199,7 +199,7 @@ void readSerialData(){
   for(int i=0;i<18;i++)   {
     if(Serial.peek()  > -1 ){
       byteCounter++;
-      millisBetween[i] = Serial.parseInt();
+      millisBetween[i] = Serial.parseInt()*10;
       debugTwo("millisBetween at", stringPos[i], "is", millisBetween[i]);
     }
   }
@@ -214,6 +214,12 @@ void readSerialPhrase(){
   firstCall = true;
 
   int byteCounter = 0;
+  
+  for (int i=0;i<18;i++){
+    pinStrikes[i] = 0;
+    repsCompleted[i] =0;
+
+  }
 
   for(int i=0;i<18;i++)   {
     if(Serial.peek()  > -1 ){

@@ -17,6 +17,9 @@ Dot myDot;
 ArrayList<OscMessage> messages;
 ArrayList<Dot> fretArray;
 
+
+//hamerons
+
 int knobMapping[] = {
   0, 1, 2, 3, 4, 5, 6, 0, 0, 7, 8, 9, 10, 11, 12, 0, 0, 13, 14, 15, 16, 17, 18
 };
@@ -89,6 +92,19 @@ public void draw() {
 
   resetKnobColor();
   drawFrets();
+}
+
+void playNote(int controller){
+  
+   int noValue = 0; // implement later  
+   int value = int(cp5.get(Knob.class,"knob"+controller).getValue());
+   noteString('p', controller, value);
+
+  print("controller " + controller + " value: " + value);
+ flashKnob(controller);
+ if(!serialMode) sendOSCMessage("/rep",controller, value); 
+  
+ 
 }
 
 boolean timeCheck(int time) {

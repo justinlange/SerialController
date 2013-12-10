@@ -25,9 +25,9 @@ void oscEvent(OscMessage theOscMessage) {
       String sGroup = "/buttons";
       parseBCRbuttons(theOscMessage, sGroup);
     }
-   else if (theOscMessage.checkTypetag("ffif")) {
+    else if (theOscMessage.checkTypetag("ffif")) {
       String sGroup = "/mb";
-      parseMbKnobs(theOscMessage, sGroup, true, true);  
+      parseMbKnobs(theOscMessage, sGroup, true, true);
     }
     else {
       print("osc message not mapped: " + theOscMessage);
@@ -60,12 +60,13 @@ void parseBCRbuttons(OscMessage theOscMessage, String sGroup) {
 
   switch(buttonNumber) {
   case 106:
-    if(serialMode) writeComplexString('d');
+    if (serialMode) writeComplexString('d');
     break;
   case 107:
-    if(serialMode) { 
+    if (serialMode) { 
       writeComplexString('p');
-    }else{
+    }
+    else {
       sendMessages();
     }
     break;
@@ -83,6 +84,12 @@ void parseWriteKnobs(OscMessage theOscMessage, String sGroup, boolean remap, boo
   int tVar = int(theOscMessage.get(0).floatValue()*100);
   println(sGroup+knobNumber+tVar);
 
+
+  for (int i=1; i<19; i++) {
+    cp5.get(Knob.class, "knob"+i).setValue(tVar);
+  }
+
+
   if (!serialMode) {
     OscMessage myMessage = new OscMessage(sGroup);
     myMessage.add(knobNumber);
@@ -97,50 +104,52 @@ void parseMbKnobs(OscMessage theOscMessage, String sGroup, boolean remap, boolea
   knobNumber = knobNumber -24;
   int tVar = int(theOscMessage.get(0).floatValue()*100);
   println(sGroup+knobNumber+tVar);
-  
-  if (setSoft) {
-    cp5.get(Knob.class, "Tknob"+knobNumber).setValue(tVar*5);
-  }
-}
 
 
-
-void parseBCRknobs(OscMessage theOscMessage, String sGroup, boolean remap, boolean setSoft) {      
-  int knobNumber = getNum(theOscMessage.addrPattern());
-  if (remap) knobNumber = knobMapping[knobNumber];
-  int tVar = int(theOscMessage.get(0).floatValue()*100);
 
   if (setSoft) {
+    //cp5.get(Knob.class, "knob"+knobNumber).setValue(tVar);
     cp5.get(Knob.class, "knob"+knobNumber).setValue(tVar);
-  }
-  else {
-    sendOSCMessage(sGroup, knobNumber, tVar);
-  }
-
-  /*   if(timeCheck(10)){
-   oscP5.send(myMessage, myRemoteLocation);
-   debugTwo(theOscMessage.addrPattern(), tVar, "knobNumber", knobNumber);
-   }  
-   */
+    }
 }
 
 
+    void parseBCRknobs(OscMessage theOscMessage, String sGroup, boolean remap, boolean setSoft) {      
+      int knobNumber = getNum(theOscMessage.addrPattern());
+      if (remap) knobNumber = knobMapping[knobNumber];
+      int tVar = int(theOscMessage.get(0).floatValue()*100);
+
+      if (setSoft) {
+        cp5.get(Knob.class, "Tknob"+knobNumber).setValue(tVar*5);
+      }
+      else {
+        sendOSCMessage(sGroup, knobNumber, tVar);
+      }
+
+      /*   if(timeCheck(10)){
+       oscP5.send(myMessage, myRemoteLocation);
+       debugTwo(theOscMessage.addrPattern(), tVar, "knobNumber", knobNumber);
+       }  
+       */
+    }
 
 
-void sendOSCMessage(String sGroup, int knobNumber, int tVar) {
-  OscMessage myMessage = new OscMessage(sGroup);
-  myMessage.add(knobNumber);
-  myMessage.add(tVar); 
 
-  if (!serialMode) {
-    oscP5.send(myMessage, myRemoteLocation);
+
+  void sendOSCMessage(String sGroup, int knobNumber, int tVar) {
+    OscMessage myMessage = new OscMessage(sGroup);
+    myMessage.add(knobNumber);
+    myMessage.add(tVar); 
+
+    if (!serialMode) {
+      oscP5.send(myMessage, myRemoteLocation);
+    }
   }
-}
 
-int getNum(String addrPattern) {
-  int knobNumber;
-  String kString = addrPattern;
-  kString = kString.substring(8, kString.length() - 2);
-  return knobNumber = int(kString);
-}
+  int getNum(String addrPattern) {
+    int knobNumber;
+    String kString = addrPattern;
+    kString = kString.substring(8, kString.length() - 2);
+    return knobNumber = int(kString);
+  }
 
