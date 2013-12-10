@@ -28,12 +28,12 @@ int delay = 10;
 boolean leapMode = false;
 boolean serialOn = false;
 boolean serialMode = false;
-boolean printStuff = true;
+boolean printStuff = false;
 long timer;
-int interval;
+int bpm = 120;
 
 public void setup() { 
-  size(1200, 800);
+  size(1200, 1200);
   createKnobs();
   setupMatrix();
 
@@ -100,7 +100,7 @@ void playNote(int controller){
    int value = int(cp5.get(Knob.class,"knob"+controller).getValue());
    noteString('p', controller, value);
 
-  print("controller " + controller + " value: " + value);
+  //print("controller " + controller + " value: " + value);
  flashKnob(controller);
  if(!serialMode) sendOSCMessage("/rep",controller, value); 
   
@@ -135,11 +135,14 @@ void controlEvent(ControlEvent theEvent) {
     //println("controller!");
     // int knobId = theEvent.getController().getId();
 
+
     if (theEvent.getController().getId() == 19) {
-      interval = int(theEvent.getController().getValue());
-      resetInterval(interval);
-      println("delay is now: " + interval);
+      int _bpm = int(theEvent.getController().getValue());
+      println("bpm is now: " + _bpm);
+      resetInterval(_bpm);
     }
+    
+ 
 
     /*
     println("got something from a controller "
@@ -154,7 +157,10 @@ void serialString(int id) {
 
 void keyPressed() {
 
-  if (key=='1') {
+  if(key=='g') {
+    getMatrixValues();
+  }
+  else if (key=='1') {
     cp5.get(Matrix.class, "myMatrix").set(0, 0, true);
   } 
   else if (key=='2') {

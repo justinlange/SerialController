@@ -54,7 +54,7 @@ void writeComplexString(char letter) {
 
     if (writeString.getBytes().length < 64) {
       if (serialOn) myPort.write(writeString);
-      print("good repsString write! byteSize = " + writeString.getBytes().length +  "  string written: " + writeString);
+      //print("good repsString write! byteSize = " + writeString.getBytes().length +  "  string written: " + writeString);
     }
     else {
       println("string too long! ");
@@ -98,7 +98,7 @@ void noteString(char letter, int controller, int value) {
 
     if (writeString.getBytes().length < 64) {
       if (serialOn) myPort.write(writeString);
-      print("good repsString write! byteSize = " + writeString.getBytes().length +  "  string written: " + writeString);
+      //print("good repsString write! byteSize = " + writeString.getBytes().length +  "  string written: " + writeString);
     }
     else {
       println("string too long! ");
