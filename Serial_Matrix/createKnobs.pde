@@ -44,6 +44,13 @@ cp5 = new ControlP5(this);
      .setSize(50,20)
      .setGroup(g1)
      ;  
+     
+   cp5.addButton("evolve")
+     .setId(44)
+     .setPosition(spacing*2,0)
+     .setSize(50,20)
+     .setGroup(g1)
+     ; 
                           ; 
   color red = color(255,0,0);
 

@@ -17,6 +17,8 @@ Dot myDot;
 ArrayList<OscMessage> messages;
 ArrayList<Dot> fretArray;
 
+int[] iTba;
+boolean readyToEvolve = false;
 
 //hamerons
 
@@ -29,6 +31,7 @@ boolean leapMode = false;
 boolean serialOn = false;
 boolean serialMode = false;
 boolean printStuff = false;
+boolean swapMatrix = true;
 long timer;
 int bpm = 120;
 
@@ -36,6 +39,10 @@ public void setup() {
   size(1200, 1200);
   createKnobs();
   setupMatrix();
+  setupEvolution();
+
+
+  int[] iTba = new int[(nx-1)*(ny-1)];
 
 
   fretArray = new ArrayList<Dot>();
@@ -70,6 +77,10 @@ public void setup() {
 
 public void draw() {
   background(0);
+  
+  if(readyToEvolve){
+    evolve(iTba);
+  }
 
   if (leapMode) {
     fingerCatch.getFingers();
@@ -142,7 +153,23 @@ void controlEvent(ControlEvent theEvent) {
       resetInterval(_bpm);
     }
     
- 
+    if(theEvent.getController().getId() == 44 ){
+      println("evolving");
+      getReadyToEvolve();
+
+      /*
+        int matrixSize = (nx-1)*(ny-1);
+        boolean tba[] = new boolean[matrixSize];
+        int iTba[] = new int[matrixSize];
+        //for(int i=0;i<matrixSize;i++) iTba[i] = 1;
+        for(int i=0;i<matrixSize;i++) iTba[i] = getMatrixValues()[i];
+        //evolve(getMatrixValues());
+        evolve(iTba);
+        //replaceMatrix(iTba);
+        */
+     }
+    
+
 
     /*
     println("got something from a controller "
@@ -150,6 +177,21 @@ void controlEvent(ControlEvent theEvent) {
      );
      */
   }
+}
+
+void getReadyToEvolve(){
+        readyToEvolve = true;
+      swapMatrix = true;
+  
+        int matrixSize = (nx-1)*(ny-1);
+        
+        //for(int i=0;i<matrixSize;i++) iTba[i] = 1;
+        for(int i=0;i<matrixSize;i++) iTba[i] = getMatrixValues()[i];
+        //evolve(getMatrixValues());
+        //evolve(iTba);
+        //replaceMatrix(iTba);
+  
+  
 }
 
 void serialString(int id) {

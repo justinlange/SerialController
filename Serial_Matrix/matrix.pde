@@ -37,10 +37,11 @@ void setupMatrix(){
   
   
 }
-boolean[] getMatrixValues() {
+int[] getMatrixValues() {
   
-  int[][] tempInt = cp5.get(Matrix.class,"myMatrix").getCells();
-  boolean[] tempArray = new boolean[nx*ny];
+  //int[][] tempInt = cp5.get(Matrix.class,"myMatrix").getCells();
+  boolean[] tempArray = new boolean[(nx-1)*(ny-1)];
+  int[] iTempArray = new int[(nx-1)*(ny-1)];
   int counter = 0;
  
   cp5.get(Matrix.class,"myMatrix").update(); 
@@ -49,22 +50,47 @@ boolean[] getMatrixValues() {
     for (int y = 0;y<ny-1;y++) {
       tempArray[counter] = cp5.get(Matrix.class,"myMatrix").get(x, y);
       //println("Matrix Cells: " + tempInt[nx-1][ny-1]);
+      if(tempArray[counter]){
+        iTempArray[counter] = 1;
+      }else{
+        iTempArray[counter] = 0;
+      }    
+      counter++;    
+
+    }
+  }
+  
+  //println("new batch: ");
+  for(int i=0;i<(nx-1)*(ny-1);i++){
+    //print(iTempArray[i] + ","); 
+  }  
+  //println("done printing!");
+  return iTempArray;
+}
+
+void replaceMatrix(int[] _returnMatrix){
+  int counter = 0;
+   for (int x = 0;x<nx-1;x++) {
+    for (int y = 0;y<ny-1;y++) {
+      
+      if(_returnMatrix[counter] == 1){
+      cp5.get(Matrix.class,"myMatrix").set(x, y, true);
+      //println("Matrix Cells: " + tempInt[nx-1][ny-1]);
+      }else{
+       cp5.get(Matrix.class,"myMatrix").set(x, y, false);
+
+      }
       counter++;
 
     }
   }
   
-  println("new batch: ");
-  for(int i=0;i<(nx*ny)-1;i++){
-    print(tempArray[i] + ","); 
-  }  
-  return tempArray;
 }
 
 void resetInterval(int _bpm){
   startingInterval = (60*1000)/_bpm;
   cp5.get(Matrix.class,"myMatrix").setInterval(startingInterval);
-  println("bpm: " + _bpm + " new interval: "  +startingInterval);
+  //println("bpm: " + _bpm + " new interval: "  +startingInterval);
 }
 
 void myMatrix(int theX, int theY) {
