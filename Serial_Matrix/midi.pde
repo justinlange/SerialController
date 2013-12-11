@@ -22,9 +22,11 @@ void noteOn(Note note) {
   }
   if (pin >= 0 && pin <= 17) { //this can be commented out once all values from push are properly mapped
 
-    if (noteOn < 1 ) {
+//we can asscertain the first midi note and disregard the others by checking to see if the
+//veolocity is greater than zero
+
+    if (vel > 0 ) {
       pushString(pin, newVel);
-      noteOn = 2;
       println("pin: " + pin + " old vel: " + vel + "  remapped velocity: " + newVel + "time: " + millis()/1000);
     }
   }
@@ -32,8 +34,15 @@ void noteOn(Note note) {
 
 void noteOff(Note note) {
 
-  noteOn--;
   int pit = note.getPitch();
+  
+  //we could have the arduino fire continuously (rather than keeping track of how many times a pin has struck
+  //and instead wait for an 'off' signal to stop the pin from firing. stuck pins, wheneevr they happen, should be
+  //easily reset by hitting the trigger button again. 
+  
+  //alternatively, since only midi messages, when repeating, only seem to happen 30 times a second, with 15 of these
+  //being 'off'
+
 }
 
 /*

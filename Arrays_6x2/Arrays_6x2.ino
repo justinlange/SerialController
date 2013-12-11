@@ -204,14 +204,14 @@ void readFromPush(){
     int hitSpeed = Serial.parseInt();
     
     for (int i=0;i<18;i++){
-      pinStrikes[pin] = 5;
-      repsCompleted[pin] = 5;
-      millisBetween[i] = hitSpeed;
-      writeHighLength[i] = 10;
+      millisBetween[i] = hitSpeed*10; //expecting 50-1
+      pinStrikes[pin] = 50/hitSpeed;
+      repsCompleted[pin] = 50/hitSpeed;
+      writeHighLength[i] = 100/hitSpeed; //need around 10...
   }
     
     
-    debugTwo("pinMarker", pinMarker,"hitSpeed",hitSpeed);
+    debugTwo("pin", pin,"hitSpeed",hitSpeed);
   }
   else{
     debugString("not enough data from push");
