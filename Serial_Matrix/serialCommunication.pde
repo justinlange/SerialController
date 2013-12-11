@@ -64,6 +64,27 @@ void writeComplexString(char letter) {
   }
 }
 
+
+void pushString(int pitch, int attack) {
+
+    String writeString = new String("");
+    int counter = 0;  
+
+    writeString = writeString + "a" + pitch + "," + attack + "\n";
+
+    if (writeString.getBytes().length < 64) {
+      if (serialOn) myPort.write(writeString);
+      print("byteSize = " + writeString.getBytes().length +  "  string written: " + writeString);
+    }
+    else {
+      print("string too long! ");
+      print(writeString.getBytes().length);
+      print("  " + writeString);
+    }
+}
+
+
+
 void noteString(char letter, int controller, int value) {
   
   controller--;

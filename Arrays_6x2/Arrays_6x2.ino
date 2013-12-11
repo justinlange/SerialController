@@ -128,9 +128,9 @@ void oscEvent(OscMessage &m) { // *note the & before msg
   // receive a message 
   //Serial.print(m.getInt(0));
   if(oscMode) {
-  m.plug("/rep", setReps); 
-  m.plug("/pwm", sendOSCBack);
-  m.plug("/write", setWriteHigh);
+    m.plug("/rep", setReps); 
+    m.plug("/pwm", sendOSCBack);
+    m.plug("/write", setWriteHigh);
   }
   //oscSerial.send(m);
 
@@ -187,6 +187,47 @@ void serialEvent(){
   else if (evalChar == 'l'){
     writeLow(); 
   }
+  else if(evalChar == 'r'){
+    resetToLow();
+    //Serial.print("reset to low");
+  }
+  else if(evalChar == 'a'){
+    readFromPush(); 
+  }
+
+}
+
+void readFromPush(){
+
+  if(Serial.peek()  > -1 ){
+    int pin = Serial.parseInt();
+    int hitSpeed = Serial.parseInt();
+    
+    for (int i=0;i<18;i++){
+      pinStrikes[pin] = 5;
+      repsCompleted[pin] = 5;
+      millisBetween[i] = hitSpeed;
+      writeHighLength[i] = 10;
+  }
+    
+    
+    debugTwo("pinMarker", pinMarker,"hitSpeed",hitSpeed);
+  }
+  else{
+    debugString("not enough data from push");
+  } 
+} 
+
+
+void resetToLow(){
+  for(int i=0;i<18;i++) { 
+    digitalWrite(stringPos[i], LOW); 
+    millisBetween[i] = 250;
+    pinStrikes[i] = 0;
+    writeHighLength[i] = 10;
+    repsCompleted[i] = 0; 
+    highState[i] = false;  
+  }
 
 }
 
@@ -214,7 +255,7 @@ void readSerialPhrase(){
   firstCall = true;
 
   int byteCounter = 0;
-  
+
   for (int i=0;i<18;i++){
     pinStrikes[i] = 0;
     repsCompleted[i] =0;
@@ -325,6 +366,7 @@ void readSerial(){
  
  
  */
+
 
 
 

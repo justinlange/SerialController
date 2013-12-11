@@ -1,3 +1,22 @@
+void fingerCatcherStuff(){
+  fingerCatch.getFingers();
+    fingerCatch.drawFingerPoints();
+    //  fingerCatch.drawGrid();
+    fingerCatch.drawTriGrid();
+    //fingerCatch.buildSerialString();
+    fingerCatch.clearVector();
+      /*
+  for (Finger finger : leap.getFingerList()) {
+   PVector fingerPos = leap.getTip(finger);
+   //     checkRectSimple(fingerPos);  
+   fill(255);
+   ellipse(fingerPos.x, fingerPos.y, 10, 10);
+   println("x: " + fingerPos.x + "  y:" + fingerPos.y + "  z: " + fingerPos.z);
+   }
+   */
+}
+
+
 class FingerCatcher {
 
   ArrayList<PVector> fingerPositions;

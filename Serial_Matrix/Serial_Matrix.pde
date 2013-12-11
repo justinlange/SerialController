@@ -4,6 +4,9 @@ import oscP5.*;
 import netP5.*;
 import com.onformative.leap.LeapMotionP5;
 import com.leapmotion.leap.Finger;
+import promidi.*;
+
+MidiIO midiIO;
 
 LeapMotionP5 leap;
 FingerCatcher fingerCatch;
@@ -32,8 +35,42 @@ boolean printStuff = false;
 long timer;
 int bpm = 120;
 
-public void setup() { 
+String[] noteMapping = {"e"};
+int[] pitchMapping;
+int[] newPitchMapping;
+int[] tempMapping;
+int[] ableMapping;
+int startingNote = 54;
+
+
+public void setup() {  
+  
+  ableMapping = new int[99];
+  pitchMapping = new int[18];
+  tempMapping = new int[18];
+  
+  
+  int tCounter = 0;
+  for(int i=startingNote;i<startingNote+18;i++){
+   ableMapping[i] = tCounter;
+   tCounter++;
+  }
+  
+  startingNote = 54;
+  
+  for(int i=0;i<18;i++){
+   tempMapping[i] = startingNote;
+   startingNote++;
+  }
+  
+ for(int i=0;i<18;i++){
+  pitchMapping[i] = tempMapping[i]; 
+ }
+
+  
+  
   size(1200, 1200);
+  setupMidi(); 
   createKnobs();
   setupMatrix();
 
@@ -63,7 +100,9 @@ public void setup() {
     String portName = Serial.list()[portVal];
     myPort = new Serial(this, portName, 115200);
   }
+  
   createDots();
+  //oscP5.plug(this, "push", "/midi/note/1");
 }
 
 
@@ -71,28 +110,13 @@ public void setup() {
 public void draw() {
   background(0);
 
-  if (leapMode) {
-    fingerCatch.getFingers();
-    fingerCatch.drawFingerPoints();
-    //  fingerCatch.drawGrid();
-    fingerCatch.drawTriGrid();
-    //fingerCatch.buildSerialString();
-    fingerCatch.clearVector();
-  }
-
-  /*
-  for (Finger finger : leap.getFingerList()) {
-   PVector fingerPos = leap.getTip(finger);
-   //     checkRectSimple(fingerPos);  
-   fill(255);
-   ellipse(fingerPos.x, fingerPos.y, 10, 10);
-   println("x: " + fingerPos.x + "  y:" + fingerPos.y + "  z: " + fingerPos.z);
-   }
-   */
-
+  if (leapMode) fingerCatcherStuff();
+ 
   resetKnobColor();
-  drawFrets();
+  drawFrets(); 
 }
+
+
 
 void playNote(int controller){
   
