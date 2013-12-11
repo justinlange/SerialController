@@ -26,15 +26,15 @@ cp5 = new ControlP5(this);
         ;
 
 
-  cp5.addKnob("interval")
-      .setRange(0, 500)
-      .setValue(125)
+  cp5.addKnob("bpm")
+      .setRange(10, 200)
+      .setValue(bpm)
       .setPosition(0, 0)
       .setRadius(50)
       .setSize(size, size)
       .setDragDirection(Knob.HORIZONTAL)
       .setGroup(g1)
-      .setCaptionLabel("interval")
+      .setCaptionLabel("bpm" + bpm)
       .setBroadcast(true)
       .setId(19)
       ;

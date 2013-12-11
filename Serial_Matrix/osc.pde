@@ -30,9 +30,9 @@ void oscEvent(OscMessage theOscMessage) {
       parseMbKnobs(theOscMessage, sGroup, true, true);
     }
     else {
-      print("osc message not mapped: " + theOscMessage);
-      print(" addrpattern: "+theOscMessage.addrPattern());
-      println(" typetag: "+theOscMessage.typetag());
+      //print("osc message not mapped: " + theOscMessage);
+      //print(" addrpattern: "+theOscMessage.addrPattern());
+      //println(" typetag: "+theOscMessage.typetag());
     }
   }
 }
@@ -46,7 +46,7 @@ void sendMessages() {
     int knobNumber = messages.get(i).get(0).intValue();
     if (dupes[knobNumber] == false) {
       oscP5.send(messages.get(i), myRemoteLocation);
-      println("sending messages: " + knobNumber + "  " + i + "  " + messages.get(i).addrPattern());
+      //println("sending messages: " + knobNumber + "  " + i + "  " + messages.get(i).addrPattern());
       dupes[knobNumber] = true;
     }
     messages.remove(i);
@@ -82,7 +82,7 @@ void parseWriteKnobs(OscMessage theOscMessage, String sGroup, boolean remap, boo
   int knobNumber = getNum(theOscMessage.addrPattern());
   if (remap) knobNumber = knobMapping[knobNumber];
   int tVar = int(theOscMessage.get(0).floatValue()*100);
-  println(sGroup+knobNumber+tVar);
+  //println(sGroup+knobNumber+tVar);
 
 
   for (int i=1; i<19; i++) {
@@ -103,7 +103,7 @@ void parseMbKnobs(OscMessage theOscMessage, String sGroup, boolean remap, boolea
   int knobNumber = getNum(theOscMessage.addrPattern());
   knobNumber = knobNumber -24;
   int tVar = int(theOscMessage.get(0).floatValue()*100);
-  println(sGroup+knobNumber+tVar);
+  //println(sGroup+knobNumber+tVar);
 
 
 
