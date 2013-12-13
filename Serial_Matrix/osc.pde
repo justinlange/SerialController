@@ -12,7 +12,7 @@ void oscEvent(OscMessage theOscMessage) {
     }
     else if (theOscMessage.checkTypetag("fif")) {
       String sGroup = "/write";
-      parseWriteKnobs(theOscMessage, sGroup, false, true);
+      if(!freeMode)  parseWriteKnobs(theOscMessage, sGroup, false, true);
     }
     else if (theOscMessage.checkTypetag("fii")) {
       String sGroup = "/seq";
